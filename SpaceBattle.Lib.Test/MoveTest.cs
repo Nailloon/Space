@@ -12,13 +12,13 @@ namespace SpaceBattle.Lib.Test
         {
             //PRE
             Mock<IMovable> movable = new Mock<IMovable>();
-            movable.SetupProperty<Vector>(m => m.Position, new Vector(0, 1));
-            movable.SetupGet<Vector>(m => m.Velocity).Returns(new Vector(5, 1));
+            movable.SetupProperty<Vector>(m => m.Position, new Vector(12, 5));
+            movable.SetupGet<Vector>(m => m.Velocity).Returns(new Vector(-7, 3));
             ICommand MC = new MoveCommand(movable.Object);
             //ACTION
             MC.Execute();
             //POST
-            Assert.True(Vector.AreEquals(new Vector(5, 2), movable.Object.Position));
+            Assert.True(Vector.AreEquals(new Vector(5, 8), movable.Object.Position));
         }
         [Fact]
         public void GetPositionExpection()
