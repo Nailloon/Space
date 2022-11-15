@@ -1,6 +1,7 @@
 using Moq;
 using SpaceBattle.Interfaces;
-using SpaceBattle.Classes;
+using SpaceBattle.Move;
+using SpaceBattle.Auxiliary;
 
 namespace SpaceBattle.Lib.Test
 {
@@ -17,7 +18,7 @@ namespace SpaceBattle.Lib.Test
             //ACTION
             MC.Execute();
             //POST
-            Assert.Equal(true, Vector.AreEquals(new Vector(5, 2), movable.Object.Position));
+            Assert.True(Vector.AreEquals(new Vector(5, 2), movable.Object.Position));
         }
         [Fact]
         public void GetPositionExpection()

@@ -1,5 +1,4 @@
-using Moq;
-using SpaceBattle.Classes;
+using SpaceBattle.Auxiliary;
 namespace SpaceBattle.Lib.Test
 {
     public class VectorTest

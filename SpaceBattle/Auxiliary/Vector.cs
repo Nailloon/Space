@@ -1,14 +1,11 @@
-﻿using System.Data;
-
-
-namespace SpaceBattle.Classes
+﻿namespace SpaceBattle.Auxiliary
 {
     public class Vector
     {
         public int[] array;
         public Vector(params int[] list)
         {
-            this.array = list;
+            array = list;
         }
 
         public static bool AreSameSize(Vector first, Vector second)
