@@ -20,7 +20,7 @@
                 return false;
             }
         }
-        public static Fraction Form(Fraction drob)
+        public static Fraction Transformation(Fraction drob)
         {
             int max = 0;
             if (drob.chislitel > drob.znamenatel)
@@ -60,7 +60,7 @@
                 result.chislitel = first.chislitel * second.znamenatel + second.chislitel * first.znamenatel;
                 result.znamenatel = first.znamenatel * second.znamenatel;
             }
-            return Form(result);
+            return Transformation(result);
         }
         public static Fraction Subtraction(Fraction first, Fraction second)
         {
@@ -70,7 +70,19 @@
         public static Fraction MultInt(int first, Fraction second)
         {
             var result = new Fraction(first * second.chislitel, second.znamenatel);
-            return Form(result);
+            return Transformation(result);
+        }
+        public static Fraction operator + (Fraction first, Fraction second)
+        {
+            return Summa(first, second);
+        }
+        public static Fraction operator - (Fraction first, Fraction second)
+        {
+            return Subtraction(first, second);
+        }
+        public static Fraction operator * (int i, Fraction first)
+        {
+            return MultInt(i, first);
         }
     }
 }

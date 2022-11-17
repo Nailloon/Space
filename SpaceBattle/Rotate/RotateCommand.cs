@@ -12,7 +12,7 @@ namespace SpaceBattle.Rotate
         }
         public void Execute()
         {
-            rotatable.Angle = Fraction.Summa(rotatable.Angle, rotatable.AngleVelocity);
+            rotatable.Angle += rotatable.AngleVelocity;
         }
     }
 }
