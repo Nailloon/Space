@@ -18,7 +18,7 @@ namespace SpaceBattle.Lib.Test
             //ACTION
             MC.Execute();
             //POST
-            Assert.True(Vector.AreEquals(new Vector(5, 8), movable.Object.Position));
+            Assert.True(new Vector(5, 8) == movable.Object.Position);
         }
         [Fact]
         public void GetPositionExpection()

@@ -1,43 +1,54 @@
 ﻿namespace SpaceBattle.Auxiliary
 {
     public class Vector
-{
-    public int[] array;
-    public Vector(params int[] list)
     {
-        array = list;
-    }
-
-    public static bool AreSameSize(Vector first, Vector second)
-    {
-        return first.array.Length == second.array.Length;
-    }
-
-    public static Vector Summa(Vector first, Vector second)
-    {
-        if (AreSameSize(first, second))
+        public int[] array;
+        public Vector(params int[] list)
         {
-            int[] arr = new int[first.array.Length];
-            for (int i = 0; i < first.array.Length; i++)
+            array = list;
+        }
+
+        public static bool AreSameSize(Vector first, Vector second)
+        {
+            return first.array.Length == second.array.Length;
+        }
+
+        public static Vector Summa(Vector first, Vector second)
+        {
+            if (AreSameSize(first, second))
             {
-                arr[i] = first.array[i] + second.array[i];
+                int[] arr = new int[first.array.Length];
+                for (int i = 0; i < first.array.Length; i++)
+                {
+                    arr[i] = first.array[i] + second.array[i];
+                }
+                return new Vector(arr);
             }
-            return new Vector(arr);
+            else
+            {
+                throw new ArgumentException();
+            }
         }
-        else
+        public static Vector operator +(Vector first, Vector second)
         {
-            throw new ArgumentException();
+            return Summa(first, second);
+        }
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(array);
+        }
+        public override bool Equals(object? obj)
+        {
+            return obj is Vector;
+        }
+
+        public static bool operator ==(Vector first, Vector second)
+        {
+            return first.array.SequenceEqual(second.array);
+        }
+        public static bool operator !=(Vector first, Vector second)
+        {
+            return (first == second) ? false : true;
         }
     }
-
-    public static Vector operator +(Vector first, Vector second)
-    {
-        return Summa(first, second);
-    }
-
-    public static bool AreEquals(Vector first, Vector second)
-    {
-        return first.array.SequenceEqual(second.array);
-    }
-}
 }
