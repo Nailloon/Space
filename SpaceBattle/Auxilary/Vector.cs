@@ -48,7 +48,7 @@
         }
         public static bool operator !=(Vector first, Vector second)
         {
-            return (first == second) ? false : true;
+            return !(first == second);
         }
     }
 }
