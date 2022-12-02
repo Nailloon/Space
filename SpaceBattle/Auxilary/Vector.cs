@@ -13,7 +13,7 @@
             return first.array.Length == second.array.Length;
         }
 
-        public static Vector Summa(Vector first, Vector second)
+        public static Vector Sum(Vector first, Vector second)
         {
             if (AreSameSize(first, second))
             {
@@ -31,7 +31,7 @@
         }
         public static Vector operator +(Vector first, Vector second)
         {
-            return Summa(first, second);
+            return Sum(first, second);
         }
         public override int GetHashCode()
         {

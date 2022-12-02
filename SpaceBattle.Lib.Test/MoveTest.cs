@@ -21,7 +21,7 @@ namespace SpaceBattle.Lib.Test
             Assert.True(new Vector(5, 8) == movable.Object.Position);
         }
         [Fact]
-        public void GetPositionExpection()
+        public void GetPositionException()
         {
             //PRE
             Mock<IMovable> movable = new Mock<IMovable>();
@@ -31,7 +31,7 @@ namespace SpaceBattle.Lib.Test
             Assert.Throws<Exception>(() => MC.Execute());
         }
         [Fact]
-        public void SetPositionExpection()
+        public void SetPositionException()
         {
             Mock<IMovable> movable = new Mock<IMovable>();
             movable.SetupGet<Vector>(m => m.Position).Returns(new Vector(10, 2));
@@ -41,7 +41,7 @@ namespace SpaceBattle.Lib.Test
             Assert.Throws<Exception>(() => MC.Execute());
         }
         [Fact]
-        public void GetVelocityExpection()
+        public void GetVelocityException()
         {
             Mock<IMovable> movable = new Mock<IMovable>();
             movable.SetupGet<Vector>(m => m.Velocity).Throws<Exception>();

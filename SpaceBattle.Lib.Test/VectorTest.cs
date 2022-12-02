@@ -14,7 +14,7 @@ namespace SpaceBattle.Lib.Test
         }
 
         [Fact]
-        public void TestSumma()
+        public void TestSum()
         {
             var first = new Vector(1, 2, 3, 5);
             var second = new Vector(2, 4, 6, 10);
