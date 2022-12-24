@@ -3,8 +3,6 @@ using Moq;
 using SpaceBattle.Interfaces;
 using SpaceBattle.Auxiliary;
 using Hwdtech.Ioc;
-using System.Collections;
-using System.Linq.Expressions;
 
 namespace SpaceBattle.Lib.Test
 {
@@ -58,11 +56,10 @@ namespace SpaceBattle.Lib.Test
         public void PositiveTest_IQueue()
         {
             var moveCommandStartable = new Mock<IMoveCommandStartable>();
-            moveCommandStartable.SetupGet(x => x.Uobj).Returns(new Mock<IUObject>().Object).Verifiable();
-            moveCommandStartable.SetupGet(x => x.action).Returns(new Dictionary<string, object>() { { "Velocity", new Vector(It.IsAny<int>(), It.IsAny<int>()) } }).Verifiable();
             Interfaces.ICommand SMC = new StartMoveCommand(moveCommandStartable.Object);
             var queue = new Mock<IQueue<Interfaces.ICommand>>();
-            queue.Setup(x => x.Push(SMC));
+            queue.Setup(x => x.Push(SMC)).Verifiable();
+            queue.Object.Push(SMC);
             queue.Verify();
         }
     }
