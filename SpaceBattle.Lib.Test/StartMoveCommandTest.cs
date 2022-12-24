@@ -20,7 +20,7 @@ namespace SpaceBattle.Lib.Test
             regStrategy.Setup(_strategy => _strategy.StartStrategy(It.IsAny<object[]>())).Returns(mockCommand.Object);
 
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Сomprehensive.SetProperty", (object[] args) => regStrategy.Object.StartStrategy(args)).Execute();
-            IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Adapt.Move", (object[] args) => regStrategy.Object.StartStrategy(args)).Execute();
+            IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Operation.Move", (object[] args) => regStrategy.Object.StartStrategy(args)).Execute();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Queue.Push", (object[] args) => regStrategy.Object.StartStrategy(args)).Execute();
         }
 
@@ -51,16 +51,6 @@ namespace SpaceBattle.Lib.Test
             moveCommandStartable.SetupGet(x => x.action).Throws<Exception>().Verifiable();
             Interfaces.ICommand SMC = new StartMoveCommand(moveCommandStartable.Object);
             Assert.Throws<Exception>(() => SMC.Execute());
-        }
-        [Fact]
-        public void PositiveTest_IQueue()
-        {
-            var moveCommandStartable = new Mock<IMoveCommandStartable>();
-            Interfaces.ICommand SMC = new StartMoveCommand(moveCommandStartable.Object);
-            var queue = new Mock<IQueue<Interfaces.ICommand>>();
-            queue.Setup(x => x.Push(SMC)).Verifiable();
-            queue.Object.Push(SMC);
-            queue.Verify();
         }
     }
 }
