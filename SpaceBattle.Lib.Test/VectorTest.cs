@@ -25,6 +25,31 @@ namespace SpaceBattle.Lib.Test
             Assert.Throws<ArgumentException>(() => first + fourth);
         }
         [Fact]
+        public void TestIndex()
+        {
+            var first = new Vector(1, 2, 3, 5);
+            Assert.Equal(2, first[1]);
+        }
+        [Fact]
+        public void TestDiff()
+        {
+            var first = new Vector(1, 2, 3, 5);
+            var second = new Vector(2, 4, 6, 10);
+            var third = new Vector(3, 6, 9, 15);
+            var fourth = new Vector(11, 22, 33);
+            Assert.True(first == third - second);
+            Assert.True(second == third - first);
+            Assert.Throws<ArgumentException>(() => third - fourth);
+        }
+        [Fact]
+        public void MultiplicInt()
+        {
+            var first = new Vector(1, 2, 3, 4);
+            var second = new Vector(2, 4, 6, 8);
+            first.MultiplicInt(2);
+            Assert.True(second == first);
+        }
+        [Fact]
         public void TestGetHashCode()
         {
             var first = new Vector(1, 0);

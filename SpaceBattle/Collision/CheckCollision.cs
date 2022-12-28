@@ -15,9 +15,9 @@ namespace SpaceBattle.Collision
 
         public void Execute()
         {
-            Vector vec = IoC.Resolve<Vector>("Calculate.Delta", UO1, UO2);
-            bool collision = IoC.Resolve<bool>("CollisionDecisionTree", vec);
-            if (collision)
+            var vec = IoC.Resolve<Vector>("Calculate.Delta", UO1, UO2);
+            bool collis = IoC.Resolve<bool>("CollisionDecisionTree", vec);
+            if (collis)
             {
                 throw new Exception();
             }
