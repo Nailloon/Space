@@ -2,10 +2,10 @@
 namespace SpaceBattle.MacroCommand
 
 {
-    public class MacroCommand : Interfaces.ICommand
+    public class MacroCommands : Interfaces.ICommand
     {
         IEnumerable<Interfaces.ICommand> commands;
-        public MacroCommand(IEnumerable<Interfaces.ICommand> commands)
+        public MacroCommands(IEnumerable<Interfaces.ICommand> commands)
         {
             this.commands = commands;
         }
