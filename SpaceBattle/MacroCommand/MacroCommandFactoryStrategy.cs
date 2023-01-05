@@ -12,7 +12,7 @@ namespace SpaceBattle.MacroCommand
             IEnumerable<Interfaces.ICommand> commands = new List<Interfaces.ICommand>();
             foreach (string command in names)
             {
-                commands = commands.Concat(new[] { IoC.Resolve<Interfaces.ICommand>("Concat.Commands", command, args[1]) });
+                commands.Append(IoC.Resolve<Interfaces.ICommand>("Concat.Commands", command, args[1]));
             }
             return IoC.Resolve<Interfaces.ICommand>("SimpleMacroCommand", commands);
         }
