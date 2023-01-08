@@ -7,12 +7,13 @@ namespace SpaceBattle.MacroCommand
     {
         public object StartStrategy(params object[] args)
         {
-            var name = args[0];
+            var name = (string)args[0];
+            var uObj = (IUObject)args[1];
             IEnumerable<string> names = IoC.Resolve<IEnumerable<string>>("Config.MacroCommand." + name);
             IEnumerable<Interfaces.ICommand> commands = new List<Interfaces.ICommand>();
             foreach (string command in names)
             {
-                commands.Append(IoC.Resolve<Interfaces.ICommand>("Concat.Commands", command, args[1]));
+                commands.Append(IoC.Resolve<Interfaces.ICommand>(command, uObj));
             }
             return IoC.Resolve<Interfaces.ICommand>("SimpleMacroCommand", commands);
         }
