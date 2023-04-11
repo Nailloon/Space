@@ -2,6 +2,7 @@
 using SpaceBattle.Server;
 using Hwdtech;
 using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace SpaceBattle.ServerStrategies
 {
@@ -11,12 +12,13 @@ namespace SpaceBattle.ServerStrategies
         {
             Dictionary<string, object> ThreadDictionary = new Dictionary<string, object>();
             Dictionary<string, object> SenderDictionary = new Dictionary<string, object>();
-            var que = IoC.Resolve<BlockingCollection<SpaceBattle.Interfaces.ICommand>>("CreateQueue");
-            var MT = IoC.Resolve<MyThread>("CreateAndStartThread", que, (Action)args[1]);
-            ThreadDictionary.Add((string)args[0], MT);
-            var Sender = IoC.Resolve<SenderAdapter>("CreateSenderToThread", que);
-            SenderDictionary.Add((string)args[0], Sender);
-            return (ThreadDictionary, SenderDictionary);
+            var listOfThreadAndSenderAdapter = IoC.Resolve<List<object>>("CreatePair", (Action)args[1]);
+            ThreadDictionary.Add((string)args[0], listOfThreadAndSenderAdapter[0]);
+            SenderDictionary.Add((string)args[0], listOfThreadAndSenderAdapter[1]);
+            var resultList = new List<object>();
+            resultList.Add(ThreadDictionary);
+            resultList.Add(SenderDictionary);
+            return resultList;
         }
     }
 }
