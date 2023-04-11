@@ -21,7 +21,7 @@ namespace SpaceBattle.Server
             });
         }
         bool stop = false;
-        IReceiver queue;
+        private IReceiver queue;
         private Thread thread;
         private ActionCommand strategy;
         internal void Stop()
@@ -43,7 +43,7 @@ namespace SpaceBattle.Server
                 IoC.Resolve<SpaceBattle.Interfaces.ICommand>("HandleException", e, cmd);
             }
         }
-        internal void UpdateBehavior(ActionCommand newBeh)
+        public void UpdateBehavior(ActionCommand newBeh)
         {
             strategy = newBeh;
         }
