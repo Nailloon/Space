@@ -22,7 +22,7 @@ namespace SpaceBattle.Server
         }
         bool stop = false;
         private IReceiver queue;
-        private Thread thread;
+        public Thread thread;
         private ActionCommand strategy;
         internal void Stop()
         {
