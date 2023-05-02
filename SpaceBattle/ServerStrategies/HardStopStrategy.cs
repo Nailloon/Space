@@ -1,11 +1,6 @@
 ﻿using Hwdtech;
 using SpaceBattle.Interfaces;
 using SpaceBattle.Server;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ICommand = SpaceBattle.Interfaces.ICommand;
 
 namespace SpaceBattle.ServerStrategies
@@ -14,8 +9,12 @@ namespace SpaceBattle.ServerStrategies
     {
         public object StartStrategy(params object[] args)
         {
-            Action<MyThread> HStop = (MyThread MT) => { MT.Stop(); };
-            return IoC.Resolve<ICommand>("SendCommand", args[1], new HardStopCommand(args[0], HStop, args[2]));
+            var id = args[0];
+            Action? act = (Action?)args[1];
+            var MT = IoC.Resolve<MyThread>("ServerThreadGetByID", id);
+            var sender = IoC.Resolve<SenderAdapter>("SenderAdapterGetByID", id);
+            var hardStopCommand = new ThreadStopCommand(MT, act);
+            return IoC.Resolve<ICommand>("SendCommand", sender, hardStopCommand);
         }
     }
 }

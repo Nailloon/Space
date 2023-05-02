@@ -1,5 +1,4 @@
-﻿
-using SpaceBattle.Interfaces;
+﻿using SpaceBattle.Interfaces;
 using System.Collections.Concurrent;
 
 namespace SpaceBattle.Server

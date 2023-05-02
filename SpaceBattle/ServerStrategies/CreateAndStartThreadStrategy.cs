@@ -2,8 +2,6 @@
 using SpaceBattle.Interfaces;
 using SpaceBattle.Server;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using ICommand = SpaceBattle.Interfaces.ICommand;
 
 namespace SpaceBattle.ServerStrategies
 {
@@ -11,10 +9,11 @@ namespace SpaceBattle.ServerStrategies
     {
         public object StartStrategy(params object[] args)
         {
-            var commands = (BlockingCollection<ICommand>)args[0];
-            commands.Add(new ActionCommand((Action)args[1]));
-            IReceiver queue = new ReceiverAdapter(commands);
-            var MT = new MyThread((IReceiver)args[0]);
+            var senderDict = IoC.Resolve<ConcurrentDictionary<string, ISender>>("ThreadIDSenderMapping");
+            senderDict.TryAdd((string)args[0], (ISender)args[1]);
+            var MT = new MyThread((IReceiver)args[2]);
+            var threadDict = IoC.Resolve<ConcurrentDictionary<string, MyThread>>("ThreadIDMyThreadMapping");
+            threadDict.TryAdd((string)args[0], MT);
             return MT;
         }
     }

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SpaceBattle.Interfaces;
+﻿using ICommand = SpaceBattle.Interfaces.ICommand;
 
 namespace SpaceBattle.Server
 {
-    public class HardStopCommand: SpaceBattle.Interfaces.ICommand
+    public class HardStopCommand: ICommand
     {
         private Action action1;
         private Action action2;

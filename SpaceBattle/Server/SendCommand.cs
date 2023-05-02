@@ -1,13 +1,8 @@
 ﻿using SpaceBattle.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using ICommand = SpaceBattle.Interfaces.ICommand;
 namespace SpaceBattle.Server
 {
-    public class SendCommand: SpaceBattle.Interfaces.ICommand
+    public class SendCommand: ICommand
     {
         private ISender sndr;
         private ICommand cmd;
