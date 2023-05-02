@@ -10,12 +10,21 @@ namespace SpaceBattle.ServerStrategies
     {
         public object StartStrategy(params object[] args)
         {
-            Action? action1 = (Action)args[1];
             BlockingCollection<ICommand> que = new BlockingCollection<ICommand>(100);
-            var receiveradapter = IoC.Resolve<ReceiverAdapter>("CreateReceiverAdapter", que, action1);
             var sender = new SenderAdapter(que);
-            var MT = IoC.Resolve<MyThread>("CreateAndStartThread", (string)args[0], sender, receiveradapter);
-            return MT;
+            if (args.Length>1)
+            {
+                Action action1 = (Action)args?[1]!;
+                var receiveradapter = IoC.Resolve<ReceiverAdapter>("CreateReceiverAdapter", que, action1);
+                var MT = IoC.Resolve<MyThread>("CreateAndStartThread", (string)args[0], sender, receiveradapter);
+                return MT;
+            }
+            else
+            {
+                var receiveradapter = IoC.Resolve<ReceiverAdapter>("CreateReceiverAdapter", que);
+                var MT = IoC.Resolve<MyThread>("CreateAndStartThread", (string)args[0], sender, receiveradapter);
+                return MT;
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ using Hwdtech;
 using Moq;
 using SpaceBattle.Interfaces;
 using SpaceBattle.Server;
+using SpaceBattle.ServerStrategies;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -132,7 +133,7 @@ namespace SpaceBattle.Lib.Test
         {
             new InitScopeBasedIoCImplementationCommand().Execute();
             IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
-            var CrAStStrategy = new CreateAndStartStrategy();
+            var CrAStStrategy = new CreateAndStartThreadStrategy();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "CreateAndStartThread", (object[] args) => CrAStStrategy.StartStrategy(args)).Execute();
             var Th1 = IoC.Resolve<MyThread>("CreateAndStartThread", "83675");
             var Th2 = IoC.Resolve<MyThread>("CreateAndStartThread", "83675", (() => Thread.Sleep(5000)));
