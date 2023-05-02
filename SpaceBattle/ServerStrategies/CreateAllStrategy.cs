@@ -6,7 +6,7 @@ using ICommand = SpaceBattle.Interfaces.ICommand;
 
 namespace SpaceBattle.ServerStrategies
 {
-    public class CreateAll: IStrategy
+    public class CreateAllStrategy: IStrategy
     {
         public object StartStrategy(params object[] args)
         {
