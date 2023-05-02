@@ -8,7 +8,7 @@ namespace SpaceBattle.Server
         public MyThread(IReceiver queue)
         {
             this.queue = queue;
-            strategy = new ActionCommand (() =>
+            strategy = new ActionCommand(() =>
             {
                 HandleCommand();
             });
@@ -22,7 +22,7 @@ namespace SpaceBattle.Server
         }
         bool stop = false;
         private IReceiver queue;
-        public Thread thread;
+        private Thread thread;
         private ActionCommand strategy;
         public void Stop()
         {
@@ -46,6 +46,14 @@ namespace SpaceBattle.Server
         public void UpdateBehavior(ActionCommand newBeh)
         {
             strategy = newBeh;
+        }
+        public bool GetStop()
+        {
+            return this.stop;
+        }
+        public bool QueueIsEmpty()
+        {
+            return queue.IsEmpty();
         }
     }
 }
