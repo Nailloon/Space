@@ -12,16 +12,14 @@ namespace SpaceBattle.ServerStrategies
         {
             BlockingCollection<ICommand> que = new BlockingCollection<ICommand>(100);
             var sender = new SenderAdapter(que);
+            var receiveradapter = IoC.Resolve<ReceiverAdapter>("CreateReceiverAdapter", que);
             if (args.Length>1)
             {
-                Action action1 = (Action)args?[1]!;
-                var receiveradapter = IoC.Resolve<ReceiverAdapter>("CreateReceiverAdapter", que, action1);
-                var MT = IoC.Resolve<MyThread>("CreateAndStartThread", (string)args[0], sender, receiveradapter);
+                var MT = IoC.Resolve<MyThread>("CreateAndStartThread", (string)args[0], sender, receiveradapter, args[1]);
                 return MT;
             }
             else
             {
-                var receiveradapter = IoC.Resolve<ReceiverAdapter>("CreateReceiverAdapter", que);
                 var MT = IoC.Resolve<MyThread>("CreateAndStartThread", (string)args[0], sender, receiveradapter);
                 return MT;
             }

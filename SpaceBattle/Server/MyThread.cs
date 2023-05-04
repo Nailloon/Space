@@ -8,7 +8,7 @@ namespace SpaceBattle.Server
         public MyThread(IReceiver queue)
         {
             this.queue = queue;
-            strategy = new ActionCommand(() =>
+            strategy = new Action(() =>
             {
                 HandleCommand();
             });
@@ -16,14 +16,14 @@ namespace SpaceBattle.Server
             {
                 while (!stop)
                 {
-                    strategy.Execute();
+                    strategy.Invoke();
                 }
             });
         }
         bool stop = false;
         private IReceiver queue;
         private Thread thread;
-        private ActionCommand strategy;
+        private Action strategy;
         public void Stop()
         {
             stop = true;
@@ -43,7 +43,7 @@ namespace SpaceBattle.Server
                 IoC.Resolve<SpaceBattle.Interfaces.ICommand>("HandleException", e, cmd);
             }
         }
-        public void UpdateBehavior(ActionCommand newBeh)
+        public void UpdateBehavior(Action newBeh)
         {
             strategy = newBeh;
         }
