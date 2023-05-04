@@ -13,7 +13,7 @@ namespace SpaceBattle.Server
         }
         public void Execute()
         {
-            if (Thread.CurrentThread == stoppingThread.thread)
+            if (Thread.CurrentThread == stoppingThread.GetThread())
             {
                 stoppingThread.Stop();
                 action.Invoke();
