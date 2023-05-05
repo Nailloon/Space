@@ -6,7 +6,7 @@ namespace SpaceBattle.Server
     {
         MyThread stoppingThread;
         Action action;
-        public ThreadStopCommand(MyThread stoppingThread, Action? action)
+        public ThreadStopCommand(MyThread stoppingThread, Action? action=null)
         {
             this.stoppingThread = stoppingThread;
             this.action = action;
@@ -16,7 +16,7 @@ namespace SpaceBattle.Server
             if (Thread.CurrentThread == stoppingThread.GetThread())
             {
                 stoppingThread.Stop();
-                action.Invoke();
+                action?.Invoke();
             }
             else
             {

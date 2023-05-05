@@ -43,10 +43,13 @@ namespace SpaceBattle.Lib.Test
 
         //}
         //[Fact]
-        //public void MyThreadSoftStopTest()
-        //{
-
-        //}
+        public void MyThreadSoftStopTest()
+        {
+            BlockingCollection<SpaceBattle.Interfaces.ICommand> que1 = new BlockingCollection<SpaceBattle.Interfaces.ICommand>(100);
+            var sender1 = new SenderAdapter(que1);
+            BlockingCollection<SpaceBattle.Interfaces.ICommand> que2 = new BlockingCollection<SpaceBattle.Interfaces.ICommand>(100);
+            var sender2 = new SenderAdapter(que2);
+        }
         [Fact]
         public void MyThreadCreateTest()
         {
