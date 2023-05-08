@@ -55,9 +55,5 @@ namespace SpaceBattle.Server
         {
             return queue.IsEmpty();
         }
-        public object GetThread()
-        {
-            return thread;
-        }
     }
 }

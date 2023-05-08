@@ -16,6 +16,7 @@ namespace SpaceBattle.ServerStrategies
             {
                 ((Action)args[3])();
             }
+            MT.Execute();
             var threadDict = IoC.Resolve<ConcurrentDictionary<string, MyThread>>("ThreadIDMyThreadMapping");
             threadDict.TryAdd((string)args[0], MT);
             return MT;
