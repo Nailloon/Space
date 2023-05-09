@@ -15,7 +15,7 @@ namespace SpaceBattle.ServerStrategies
             var hardStopCommand = new ThreadStopCommand(MT);
             if (args.Length > 1)
             {
-                Action? act = (Action?)args[1];
+                Action act = (Action)args[1];
                 var macroHardStopCommand = IoC.Resolve<ICommand>("MacroCommandForHardStopStrategy", hardStopCommand, act);
                 return IoC.Resolve<ICommand>("SendCommand", sender, macroHardStopCommand);
             }

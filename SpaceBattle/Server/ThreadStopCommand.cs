@@ -5,7 +5,6 @@ namespace SpaceBattle.Server
     public class ThreadStopCommand: ICommand
     {
         MyThread stoppingThread;
-        Action action;
         public ThreadStopCommand(MyThread stoppingThread)
         {
             this.stoppingThread = stoppingThread;
