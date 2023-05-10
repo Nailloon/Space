@@ -12,27 +12,15 @@ namespace SpaceBattle.ServerStrategies
             var id = args[0];
             var MT = IoC.Resolve<MyThread>("ServerThreadGetByID", id);
             var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", id);
-            var hardStopCommand = new ThreadStopCommand(MT);
             if (args.Length > 1)
             {
-                Action act = (Action)args[1];
-                var softStopCommand = IoC.Resolve<ICommand>("MacroCommandForSoftStopStrategy", hardStopCommand, MT, act);
+                Action act1 = (Action)args[1];
+                var softStopCommand = IoC.Resolve<ICommand>("CommandForSoftStopStrategy", MT, act1);
                 return IoC.Resolve<ICommand>("SendCommand", sender, softStopCommand);
             }
             else
             {
-                Action act = new Action(() =>
-                {
-                    if(MT.QueueIsEmpty())
-                    {
-                        MT.HandleCommand();
-                    }
-                    else
-                    {
-                        MT.Stop();
-                    }
-                });
-                var softStopCommand = IoC.Resolve<ICommand>("MacroCommandForSoftStopStrategy", hardStopCommand, MT, act);
+                var softStopCommand = IoC.Resolve<ICommand>("CommandForSoftStopStrategy", MT);
                 return IoC.Resolve<ICommand>("SendCommand", sender, softStopCommand);
             }
         }
