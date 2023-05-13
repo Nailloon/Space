@@ -40,7 +40,8 @@ namespace SpaceBattle.Server
                 cmd.Execute();
             }catch(Exception e)
             {
-                IoC.Resolve<SpaceBattle.Interfaces.ICommand>("HandleException", e, cmd);
+                var exceptionCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("HandleException", e, cmd);
+                exceptionCommand.Execute();
             }
         }
         public void UpdateBehavior(Action newBeh)
@@ -54,6 +55,10 @@ namespace SpaceBattle.Server
         public bool QueueIsEmpty()
         {
             return queue.IsEmpty();
+        }
+        public bool Equals(Thread thread)
+        {
+            return this.thread == thread;
         }
     }
 }

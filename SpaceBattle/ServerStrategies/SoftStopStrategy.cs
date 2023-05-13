@@ -16,12 +16,12 @@ namespace SpaceBattle.ServerStrategies
             {
                 Action act1 = (Action)args[1];
                 var softStopCommand = IoC.Resolve<ICommand>("CommandForSoftStopStrategy", MT, act1);
-                return IoC.Resolve<ICommand>("SendCommand", sender, softStopCommand);
+                return softStopCommand;
             }
             else
             {
                 var softStopCommand = IoC.Resolve<ICommand>("CommandForSoftStopStrategy", MT);
-                return IoC.Resolve<ICommand>("SendCommand", sender, softStopCommand);
+                return softStopCommand;
             }
         }
     }

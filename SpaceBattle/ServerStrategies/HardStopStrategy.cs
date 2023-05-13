@@ -17,11 +17,11 @@ namespace SpaceBattle.ServerStrategies
             {
                 Action act = (Action)args[1];
                 var macroHardStopCommand = IoC.Resolve<ICommand>("MacroCommandForHardStopStrategy", hardStopCommand, act);
-                return IoC.Resolve<ICommand>("SendCommand", sender, macroHardStopCommand);
+                return macroHardStopCommand;
             }
             else
             {
-                return IoC.Resolve<ICommand>("SendCommand", sender, hardStopCommand);
+                return hardStopCommand;
             }
         }
     }

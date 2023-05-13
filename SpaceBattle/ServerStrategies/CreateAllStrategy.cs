@@ -14,7 +14,7 @@ namespace SpaceBattle.ServerStrategies
             var sender = new SenderAdapter(que);
             if (args.Length > 1)
             {
-                que.Append(new ActionCommand((Action)args[1]));
+                sender.Send(new ActionCommand((Action)args[1]));
             }
             var receiveradapter = IoC.Resolve<ReceiverAdapter>("CreateReceiverAdapter", que);
             var MT = IoC.Resolve<MyThread>("CreateAndStartThread", (string)args[0], sender, receiveradapter);
