@@ -41,20 +41,21 @@ namespace SpaceBattle.Lib.Test
             var commandForSoftStopStrategy = new CommandForSoftStopStrategy();
             IoC.Resolve<ICommand>("IoC.Register", "CommandForSoftStopStrategy", (object[] args) => commandForSoftStopStrategy.StartStrategy(args)).Execute();
         }
-        [Fact]
+        [Fact(Timeout = 1000)]
         public void MyThreadCreateTest()
         {
             var Th1 = IoC.Resolve<MyThread>("CreateAll", "83675");
-            var Th2 = IoC.Resolve<MyThread>("CreateAll", "83675", (() => Thread.Sleep(5000)));
-            Assert.NotNull(Th1);
-            Assert.NotNull(Th2);
+            var Th2 = IoC.Resolve<MyThread>("CreateAll", "83674", (() => Thread.Sleep(5000)));
+            Assert.NotNull(IoC.Resolve<MyThread>("ServerThreadGetByID", "83675"));
+            Assert.NotNull(IoC.Resolve<ISender>("SenderAdapterGetByID", "83675"));
+            Assert.NotNull(IoC.Resolve<MyThread>("ServerThreadGetByID", "83674"));
+            Assert.NotNull(IoC.Resolve<ISender>("SenderAdapterGetByID", "83674"));
             Assert.True(Th1.QueueIsEmpty());
             Assert.False(Th1 == Th2);
             Assert.False(Th1.Equals(Th2));
 
             Th1.Stop();
             Th2.Stop();
-            Thread.Sleep(1000);
         }
     } 
 }
