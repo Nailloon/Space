@@ -71,6 +71,10 @@ namespace SpaceBattle.Lib.Test
             var th3 = IoC.Resolve<MyThread>("CreateAll", "83671", act1);
             var th6 = IoC.Resolve<MyThread>("CreateAll", "835", act1);
             var mre1 = new ManualResetEvent(false);
+            Assert.NotNull(IoC.Resolve<MyThread>("ServerThreadGetByID", "83671"));
+            Assert.NotNull(IoC.Resolve<ISender>("SenderAdapterGetByID", "83671"));
+            Assert.NotNull(IoC.Resolve<MyThread>("ServerThreadGetByID", "835"));
+            Assert.NotNull(IoC.Resolve<ISender>("SenderAdapterGetByID", "835"));
             var hardStopCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("HardStop", "835", () => { mre1.Set(); });
             var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", "83671");
             var sendCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SendCommand", sender, hardStopCommand);
@@ -80,7 +84,8 @@ namespace SpaceBattle.Lib.Test
             Assert.True(th3.QueueIsEmpty());
             Assert.False(th3.GetStop());
             Assert.False(th6.GetStop());
-
+            command1.Verify();
+            regStrategy1.Verify();
             th3.Stop();
             th6.Stop();
             Thread.Sleep(1000);
