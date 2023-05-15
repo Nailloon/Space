@@ -55,5 +55,35 @@ namespace SpaceBattle.Lib.Test
             Assert.True(th3.GetStop());
             Thread.Sleep(1000);
         }
+        [Fact]
+        public void MyThreadHardStopTestWithException()
+        {
+            var command1 = new Mock<Interfaces.ICommand>();
+            var regStrategy1 = new Mock<IStrategy>();
+            command1.Setup(_command => _command.Execute()).Verifiable();
+            regStrategy1.Setup(_strategy => _strategy.StartStrategy(It.IsAny<object[]>())).Returns(command1.Object).Verifiable();
+            IoC.Resolve<ICommand>("IoC.Register", "HandleException", (object[] args) => regStrategy1.Object.StartStrategy(args)).Execute();
+            Action act1 = () => {
+                IoC.Resolve<ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
+                IoC.Resolve<ICommand>("IoC.Register", "HandleException", (object[] args) => regStrategy1.Object.StartStrategy(args)).Execute();
+            };
+
+            var th3 = IoC.Resolve<MyThread>("CreateAll", "83671", act1);
+            var th6 = IoC.Resolve<MyThread>("CreateAll", "835", act1);
+            var mre1 = new ManualResetEvent(false);
+            var hardStopCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("HardStop", "835", () => { mre1.Set(); });
+            var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", "83671");
+            var sendCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SendCommand", sender, hardStopCommand);
+
+            sendCommand.Execute();
+            mre1.WaitOne(200);
+            Assert.True(th3.QueueIsEmpty());
+            Assert.False(th3.GetStop());
+            Assert.False(th6.GetStop());
+
+            th3.Stop();
+            th6.Stop();
+            Thread.Sleep(1000);
+        }
     }
 }
