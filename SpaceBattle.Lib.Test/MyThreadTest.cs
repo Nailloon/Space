@@ -41,6 +41,7 @@ namespace SpaceBattle.Lib.Test
             var commandForSoftStopStrategy = new CommandForSoftStopStrategy();
             IoC.Resolve<ICommand>("IoC.Register", "CommandForSoftStopStrategy", (object[] args) => commandForSoftStopStrategy.StartStrategy(args)).Execute();
         }
+        [Fact]
         public void MyThreadCreateTest()
         {
             var Th1 = IoC.Resolve<MyThread>("CreateAll", "83675");
