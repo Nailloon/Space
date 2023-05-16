@@ -20,7 +20,7 @@ namespace SpaceBattle.Server
                 }
             });
         }
-        bool stop = false;
+        internal bool stop = false;
         private IReceiver queue;
         private Thread thread;
         private Action strategy;
