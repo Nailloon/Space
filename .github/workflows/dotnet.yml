@@ -31,7 +31,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --collect:"XPlat Code Coverage;Format=opencover" --verbosity normal
     - name: Find coverage file
-      run: find ./SpaceBattle.Lib.Test/TestResults -name "*.xml" -exec mv {} ./Spacebattle.Lib.Test/TestResults/coverage.opencover.xml \;
+      run: find ./SpaceBattle.Lib.Test/TestResults -name "*.xml" -exec mv {} ./SpaceBattle.Lib.Test/TestResults/coverage.opencover.xml \;
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
       with:
