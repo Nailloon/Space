@@ -173,8 +173,8 @@ namespace SpaceBattle.Lib.Test
                 IoC.Resolve<ICommand>("IoC.Register", "HandleException", (object[] args) => regStrategy1.Object.StartStrategy(args)).Execute();
             };
 
-            var th3 = IoC.Resolve<MyThread>("CreateAll", "83673", act1);
-            var th6 = IoC.Resolve<MyThread>("CreateAll", "835", act1);
+            var th10 = IoC.Resolve<MyThread>("CreateAll", "83673", act1);
+            var th8 = IoC.Resolve<MyThread>("CreateAll", "835", act1);
             var mre1 = new ManualResetEvent(false);
             var softStopCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SoftStop", "835", () => { mre1.Set(); });
             var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", "83673");
@@ -182,9 +182,9 @@ namespace SpaceBattle.Lib.Test
 
             sendCommand.Execute();
             mre1.WaitOne(200);
-            Assert.True(th3.QueueIsEmpty());
-            Assert.False(th3.GetStop());
-            Assert.False(th6.GetStop());
+            Assert.True(th10.QueueIsEmpty());
+            Assert.False(th10.GetStop());
+            Assert.False(th8.GetStop());
         }
         [Fact(Timeout=1500)]
         public void HardStopCommandWithoutAction()
