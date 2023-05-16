@@ -6,7 +6,6 @@ using SpaceBattle.Server;
 using SpaceBattle.ServerStrategies;
 using System.Collections.Concurrent;
 using ICommand = Hwdtech.ICommand;
-using System.ComponentModel.Design;
 
 namespace SpaceBattle.Lib.Test
 {
@@ -93,11 +92,93 @@ namespace SpaceBattle.Lib.Test
         public void MyThreadEqualsTrueTest()
         {
             var mre1 = new ManualResetEvent(false);
-            var Th1 = IoC.Resolve<MyThread>("CreateAll", "8367", () => { mre1.Set(); });
+            BlockingCollection<SpaceBattle.Interfaces.ICommand> que = new BlockingCollection<SpaceBattle.Interfaces.ICommand>(100);
+            var sender1 = new SenderAdapter(que);
+            var receiver1 = IoC.Resolve<IReceiver>("CreateReceiverAdapter", que, () => { mre1.Set(); });
+            var Th1 = IoC.Resolve<MyThread>("CreateAndStartThread", "8367", sender1, receiver1);
             Assert.True(Th1.Equals(IoC.Resolve<MyThread>("ServerThreadGetByID", "8367")));
             Th1.Stop();
             mre1.WaitOne(200);
             Assert.True(Th1.GetStop());
+            Thread.Sleep(1000);
+        }
+        [Fact]
+        public void MyThreadEqualsFalseTest()
+        {
+            var Th1 = IoC.Resolve<MyThread>("CreateAll", "8367");
+            var Th2 = IoC.Resolve<MyThread>("CreateAll", "8376");
+            Assert.True(Th1.Equals(IoC.Resolve<MyThread>("ServerThreadGetByID", "8367")));
+            Assert.False(Th2.Equals(IoC.Resolve<MyThread>("ServerThreadGetByID", "8367")));
+            Th1.Stop();
+            Th2.Stop();
+            Assert.True(Th1.GetStop());
+            Assert.True(Th2.GetStop());
+            Thread.Sleep(1000);
+        }
+        [Fact]
+        public void MyThreadHardStopTestWithException()
+        {
+            var command1 = new Mock<Interfaces.ICommand>();
+            var regStrategy1 = new Mock<IStrategy>();
+            command1.Setup(_command => _command.Execute()).Verifiable();
+            regStrategy1.Setup(_strategy => _strategy.StartStrategy(It.IsAny<object[]>())).Returns(command1.Object).Verifiable();
+            IoC.Resolve<ICommand>("IoC.Register", "HandleException", (object[] args) => regStrategy1.Object.StartStrategy(args)).Execute();
+            Action act1 = () =>
+            {
+                IoC.Resolve<ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
+                IoC.Resolve<ICommand>("IoC.Register", "HandleException", (object[] args) => regStrategy1.Object.StartStrategy(args)).Execute();
+            };
+
+            var th3 = IoC.Resolve<MyThread>("CreateAll", "83673", act1);
+            var th6 = IoC.Resolve<MyThread>("CreateAll", "835", act1);
+            var mre1 = new ManualResetEvent(false);
+            var hardStopCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("HardStop", "835", () => { mre1.Set(); });
+            var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", "83673");
+            var sendCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SendCommand", sender, hardStopCommand);
+
+            sendCommand.Execute();
+            mre1.WaitOne(200);
+            Assert.True(th3.QueueIsEmpty());
+            Assert.False(th3.GetStop());
+            Assert.False(th6.GetStop());
+            th3.Stop();
+            th6.Stop();
+            command1.Verify();
+            regStrategy1.Verify();
+            Thread.Sleep(1000);
+        }
+        [Fact]
+        public void MyThreadSoftStopWorkingSomeTime()
+        {
+            var mockCommand1 = new Mock<Interfaces.ICommand>();
+            var mockCommand3 = new Mock<Interfaces.ICommand>();
+            var mockCommand4 = new Mock<Interfaces.ICommand>();
+            var mockCommand2 = new Mock<Interfaces.ICommand>();
+            mockCommand1.Setup(_command => _command.Execute()).Verifiable();
+            mockCommand3.Setup(_command => _command.Execute()).Verifiable();
+            mockCommand4.Setup(_command => _command.Execute()).Verifiable();
+            mockCommand2.Setup(_command => _command.Execute()).Verifiable();
+
+            var mre1 = new ManualResetEvent(false);
+            var th1 = IoC.Resolve<MyThread>("CreateAll", "83674");
+            Assert.True(th1.QueueIsEmpty());
+            var softStopCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SoftStop", "83674");
+            var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", "83674");
+            IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SendCommand", sender, mockCommand1.Object).Execute();
+            IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SendCommand", sender, mockCommand2.Object).Execute();
+            var sendCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SendCommand", sender, softStopCommand);
+            sendCommand.Execute();
+            IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SendCommand", sender, mockCommand3.Object).Execute();
+            IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SendCommand", sender, mockCommand4.Object).Execute();
+            IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SendCommand", sender, new ActionCommand(() => { mre1.Set(); })).Execute();
+            Assert.False(th1.QueueIsEmpty());
+            mre1.WaitOne(200);
+            mockCommand1.Verify();
+            mockCommand3.Verify();
+            mockCommand4.Verify();
+            mockCommand2.Verify();
+            Assert.True(th1.QueueIsEmpty());
+            Assert.True(th1.GetStop());
             Thread.Sleep(1000);
         }
     }
