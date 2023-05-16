@@ -13,7 +13,14 @@ namespace SpaceBattle.Server
         }
         public void Execute()
         {
-            updateBehaviorThread.UpdateBehavior(action);
+            if (updateBehaviorThread.Equals(Thread.CurrentThread))
+            {
+                updateBehaviorThread.UpdateBehavior(action);
+            }
+            else
+            {
+                throw new Exception();
+            } 
         }
     }
 }
