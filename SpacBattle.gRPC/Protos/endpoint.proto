@@ -9,11 +9,15 @@ service EndPoint{
   // Sends a greeting
   rpc Command(CommandRequest) returns (CommandReply);
 }
+message CommandForObject{
+	string GameItemId = 1;
+	string CommandType = 2;
+}
 
 message CommandRequest {
 	string GameId = 1;
-	string GameItemId = 2;
-	string CommandType = 3;
+	repeated CommandForObject args = 2;
+
 }
 
 // The response message containing the greetings.
