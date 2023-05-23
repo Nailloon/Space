@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option csharp_namespace = "SpaceBattle.gRPC";
+
+package server;
+
+// The greeting service definition.
+service EndPoint{
+  // Sends a greeting
+  rpc Command(CommandRequest) returns (CommandReply);
+}
+
+message CommandRequest {
+	string GameId = 1;
+	string GameItemId = 2;
+	string CommandType = 3;
+}
+
+// The response message containing the greetings.
+message CommandReply {
+  int32 status = 1;
+}

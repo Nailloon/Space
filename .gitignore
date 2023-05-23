@@ -396,3 +396,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# gRPC files
+appsettings.json
+launchsettings.json
+appsettings.Development.json
