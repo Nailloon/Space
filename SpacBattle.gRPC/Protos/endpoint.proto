@@ -16,8 +16,7 @@ message CommandForObject{
 
 message CommandRequest {
 	string GameId = 1;
-	repeated CommandForObject args = 2;
-
+	repeated CommandForObject Args = 2;
 }
 
 // The response message containing the greetings.

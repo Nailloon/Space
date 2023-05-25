@@ -22,13 +22,14 @@ namespace SpaceBattle.gRPC.Services
         {
             string gameId = request.GameId;
             IDictionary<string, string> argv = new Dictionary<string, string>();
-            request.Args.Select(arg => argv[arg.GameItemId] = arg.CommandType);
+            request.Args.Select(arg => argv[arg.GameItemId] = arg.CommandType).ToArray();
             List<ICommand> commands = new List<ICommand>();
             foreach (KeyValuePair<string, string> item in argv)
             {
-                commands.Add(IoC.Resolve<ICommand>("CreateCommand", item.Key, item.Value));
+                commands.Add(IoC.Resolve<ICommand>("CreateCommandByNameForObject", item.Key, item.Value));
             }
-            IoC.Resolve<ICommand>("SendCommand", gameId, new MacroCommands(commands)).Execute();
+            var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", gameId);
+            IoC.Resolve<ICommand>("SendCommand", sender, new MacroCommands(commands)).Execute();
             return Task.FromResult(new CommandReply
             {
                 Status = 202
