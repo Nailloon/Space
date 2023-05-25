@@ -75,9 +75,12 @@ namespace SpaceBattle.Lib.Test
             var cps = new EndPointService(new Mock<ILogger<EndPointService>>().Object);
             cps.Command(request, new Mock<ServerCallContext>().Object);
             var mre2 = new ManualResetEvent(false);
+            IoC.Resolve<ICommand>("SendCommand", IoC.Resolve<ISender>("SenderAdapterGetByID", "456"), new ActionCommand(() => { mre2.Set(); })).Execute();
             mre1.WaitOne(200);
             moveStrategyForObject.Verify();
+            mre2.WaitOne(200);
             mockCommand1.Verify();
+            Assert.True(th1.QueueIsEmpty());
         }
     }
 }
