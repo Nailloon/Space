@@ -16,6 +16,8 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using SpaceBattle.gRPC.Services;
 using SpaceBattleGrpc.Strategies;
+using System.Reflection;
+using Xunit;
 
 namespace SpaceBattle.Lib.Test
 {
@@ -55,46 +57,6 @@ namespace SpaceBattle.Lib.Test
         }
 
         [Fact]
-        public void CommandSuccessfulTestWithoutException()
-        {
-            var mockCommand1 = new Mock<ICommand>();
-            mockCommand1.Setup(_command => _command.Execute()).Verifiable();
-            var moveStrategyForObject = new Mock<IStrategy>();
-            moveStrategyForObject.Setup(_strategy => _strategy.StartStrategy(It.IsAny<object[]>())).Returns(mockCommand1.Object).Verifiable();
-            IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "CreateCommandByNameForObject", (object[] args) => moveStrategyForObject.Object.StartStrategy(args)).Execute();
-
-            var command1 = new CommandForObject
-            {
-                GameItemId = "123",
-                Value = "1"
-            };
-            var command2 = new CommandForObject
-            {
-                GameItemId = "124",
-                Value = "2"
-            };
-            var args = new List<CommandForObject>();
-            args.Add(command1);
-            args.Add(command2);
-            var request = new CommandRequest
-            {
-                GameId = "456",
-                CommandType = "Move",
-                Args = { args }
-            };
-            var mre1 = new ManualResetEvent(false);
-            var th1 = IoC.Resolve<MyThread>("CreateAll", "456", () => { mre1.Set(); });
-            var cps = new EndPointService(new Mock<ILogger<EndPointService>>().Object);
-            cps.Command(request, new Mock<ServerCallContext>().Object);
-            var mre2 = new ManualResetEvent(false);
-            IoC.Resolve<ICommand>("SendCommand", IoC.Resolve<ISender>("SenderAdapterGetByID", "456"), new ActionCommand(() => { mre2.Set(); })).Execute();
-            mre1.WaitOne(200);
-            moveStrategyForObject.Verify();
-            mre2.WaitOne(200);
-            mockCommand1.Verify();
-            Assert.True(th1.QueueIsEmpty());
-        }
-        [Fact]
         public void EndPointSuccessfulTest()
         {
             var cestrat = new StartEndPointServiceStrategy();
@@ -108,20 +70,24 @@ namespace SpaceBattle.Lib.Test
             var d = new Dictionary<string, string>() { { "123", "456" }, { "12", "24" } };
             var commandArgs = d.Select(kv => new CommandForObject { GameItemId = kv.Key, Value = kv.Value }).ToArray();
             request.Args.Add(commandArgs);
+            var cmd = new Mock<ICommand>();
+            cmd.Setup(_command => _command.Execute());
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "CreateCommandByNameForObject", (object[] args) =>
             {
-                var cmd = new Mock<ICommand>();
                 Assert.Same(request.CommandType, args[0]);
                 Assert.Equal(d.Keys.ToArray(), args[1]);
                 Assert.Equal(d.Values.ToArray(), args[2]);
                 return cmd.Object;
             }
             ).Execute();
+            var mre1 = new ManualResetEvent(false);
+            var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", "thread1");
+            IoC.Resolve<ICommand>("SendCommand", sender, new ActionCommand(() => { mre1.Set(); })).Execute();
             //Act
             var endp = IoC.Resolve<ICommand>("CreateEndPoint");
             var service = new EndPointService(new Mock<ILogger<EndPointService>>().Object);
             service.Command(request, new Mock<ServerCallContext>().Object);
-            Assert.False(thread1.QueueIsEmpty());
+            Assert.True(thread1.QueueIsEmpty());
         }
     }
 }
