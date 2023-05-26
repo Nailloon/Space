@@ -8,9 +8,9 @@ class StartEndPointServiceCommand : ICommand
 
     WebApplication app;
 
-    public StartEndPointServiceCommand(string[] args)
+    public StartEndPointServiceCommand()
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder();
         builder.Services.AddGrpc();
 
         this.app = builder.Build();

@@ -21,15 +21,12 @@ namespace SpaceBattle.gRPC.Services
         public override Task<CommandReply> Command(CommandRequest request, ServerCallContext context)
         {
             string gameId = request.GameId;
+            string CommandName = request.CommandType;
             IDictionary<string, string> argv = new Dictionary<string, string>();
-            request.Args.Select(arg => argv[arg.GameItemId] = arg.CommandType).ToArray();
-            List<ICommand> commands = new List<ICommand>();
-            foreach (KeyValuePair<string, string> item in argv)
-            {
-                commands.Add(IoC.Resolve<ICommand>("CreateCommandByNameForObject", item.Key, item.Value));
-            }
-            var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", gameId);
-            IoC.Resolve<ICommand>("SendCommand", sender, new MacroCommands(commands)).Execute();
+            request.Args.Select(arg => argv[arg.GameItemId] = arg.Value).ToArray();
+            var cmd = IoC.Resolve<ICommand>("CreateCommandByNameForObject", CommandName, argv.Keys, argv.Values);
+            var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", IoC.Resolve<string>("Storage.GetThreadByGameID", gameId));
+            IoC.Resolve<ICommand>("SendCommand", sender, cmd).Execute();
             return Task.FromResult(new CommandReply
             {
                 Status = 202

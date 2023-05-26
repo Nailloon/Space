@@ -4,9 +4,8 @@ using SpaceBattle.Interfaces;
 
 public class StartEndPointServiceStrategy : IStrategy
 {
-    public object StartStrategy(params object[] argv)
+    public object StartStrategy(params object[] args)
     {
-        var builderArgs = (string[])argv[0];
-        return new StartEndPointServiceCommand(args: builderArgs);
+        return new StartEndPointServiceCommand();
     }
 }
