@@ -1,6 +1,8 @@
 using Grpc.Core;
 using Hwdtech;
 using SpaceBattle.Interfaces;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using ICommand = SpaceBattle.Interfaces.ICommand;
 
 namespace SpaceBattle.gRPC.Services
@@ -16,13 +18,9 @@ namespace SpaceBattle.gRPC.Services
         public override Task<CommandReply> Command(CommandRequest request, ServerCallContext context)
         {
             string gameId = request.GameId;
-            string CommandName = request.CommandType;
-            string GameItemId = request.GameItemId;
-            IDictionary<string, string> argv = new Dictionary<string, string>();
-            request.Args.Select(arg => argv[arg.Key] = arg.Value).ToArray();
-            var cmd = IoC.Resolve<ICommand>("CreateCommandByNameForObject", CommandName, GameItemId, argv.Keys, argv.Values);
-            var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", IoC.Resolve<string>("Storage.GetThreadByGameID", gameId));
-            IoC.Resolve<ICommand>("SendCommand", sender, cmd).Execute();
+            var cmd = IoC.Resolve<ICommand>("CreateCommandByNameForObject", request);
+            var threadID = IoC.Resolve<string>("Storage.GetThreadByGameID", gameId);
+            IoC.Resolve<ICommand>("SendCommandByThreadID", threadID, cmd).Execute();
             return Task.FromResult(new CommandReply
             {
                 Status = 202

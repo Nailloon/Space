@@ -46,6 +46,8 @@ namespace SpaceBattle.Lib.Test
                 return dict[(string)args[0]];
             }
             ).Execute();
+            var sendCommandByThreadID = new SendCommandByThreadIDStrategy();
+            IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "SendCommandByThreadID", (object[] args) => sendCommandByThreadID.StartStrategy(args)).Execute();
         }
 
         [Fact]
@@ -63,13 +65,9 @@ namespace SpaceBattle.Lib.Test
             var commandArgs = d.Select(kv => new CommandForObject { Key = kv.Key, Value = kv.Value }).ToArray();
             request.Args.Add(commandArgs);
             var cmd = new Mock<ICommand>();
-            cmd.Setup(_command => _command.Execute());
+            cmd.Setup(_command => _command.Execute()).Verifiable();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "CreateCommandByNameForObject", (object[] args) =>
             {
-                Assert.Same(request.CommandType, args[0]);
-                Assert.Same(request.GameItemId, args[1]);
-                Assert.Equal(d.Keys.ToArray(), args[2]);
-                Assert.Equal(d.Values.ToArray(), args[3]);
                 return cmd.Object;
             }
             ).Execute();
@@ -80,6 +78,7 @@ namespace SpaceBattle.Lib.Test
             var service = new EndPointService(new Mock<ILogger<EndPointService>>().Object);
             service.Command(request, new Mock<ServerCallContext>().Object);
             Assert.True(thread1.QueueIsEmpty());
+            cmd.Verify();
         }
     }
 }
