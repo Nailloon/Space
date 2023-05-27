@@ -33,5 +33,8 @@
   <ItemGroup>
     <ProjectReference Include="..\SpaceBattle\SpaceBattle.csproj" />
   </ItemGroup>
+    <ItemGroup>
+		<ProjectReference Include="..\SpaceBattle.gRPC\SpaceBattle.gRPC.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -1,0 +1,5 @@
+ignore:
+    -"/SpaceBattle.gRPC/Others"
+    -"/SpaceBattle.gRPC/obj/Debug/net6.0"
+    -"/SpaceBattle.gRPC/Program.cs"
+    -"/SpaceBattle.gRPC/Main.cs"
