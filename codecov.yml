@@ -1,2 +1,2 @@
 ignore:
-    ["\SpacBattle.gRPC\Strategies", "SpacBattle.gRPC\obj\Debug\net6.0", "\SpacBattle.gRPC\Program.cs", "\SpacBattle.gRPC\Main.cs"] 
+    ["/SpacBattle.gRPC/Strategies", "SpacBattle.gRPC/obj/Debug/net6.0", "/SpacBattle.gRPC/Program.cs", "/SpacBattle.gRPC/Main.cs"] 
