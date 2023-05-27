@@ -10,14 +10,15 @@ service EndPoint{
   rpc Command(CommandRequest) returns (CommandReply);
 }
 message CommandForObject{
-	string GameItemId = 1;
+	string Key = 1;
 	string Value = 2;
 }
 
 message CommandRequest {
 	string GameId = 1;
 	string CommandType = 2;
-	repeated CommandForObject Args = 3;
+	string GameItemId = 3;
+	repeated CommandForObject Args = 4;
 }
 
 // The response message containing the greetings.

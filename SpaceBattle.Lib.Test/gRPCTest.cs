@@ -66,24 +66,24 @@ namespace SpaceBattle.Lib.Test
 
             var games = IoC.Resolve < ConcurrentDictionary < string, string>>("Storage.ThreadByGameID");
             games.TryAdd("game1", "thread1");
-            var request = new CommandRequest { GameId= "game1", CommandType= "Check" };
+            var request = new CommandRequest { GameId= "game1", CommandType= "Check", GameItemId ="1"  };
             var d = new Dictionary<string, string>() { { "123", "456" }, { "12", "24" } };
-            var commandArgs = d.Select(kv => new CommandForObject { GameItemId = kv.Key, Value = kv.Value }).ToArray();
+            var commandArgs = d.Select(kv => new CommandForObject { Key = kv.Key, Value = kv.Value }).ToArray();
             request.Args.Add(commandArgs);
             var cmd = new Mock<ICommand>();
             cmd.Setup(_command => _command.Execute());
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "CreateCommandByNameForObject", (object[] args) =>
             {
                 Assert.Same(request.CommandType, args[0]);
-                Assert.Equal(d.Keys.ToArray(), args[1]);
-                Assert.Equal(d.Values.ToArray(), args[2]);
+                Assert.Same(request.GameItemId, args[1]);
+                Assert.Equal(d.Keys.ToArray(), args[2]);
+                Assert.Equal(d.Values.ToArray(), args[3]);
                 return cmd.Object;
             }
             ).Execute();
             var mre1 = new ManualResetEvent(false);
             var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", "thread1");
             IoC.Resolve<ICommand>("SendCommand", sender, new ActionCommand(() => { mre1.Set(); })).Execute();
-            //Act
             var endp = IoC.Resolve<ICommand>("CreateEndPoint");
             var service = new EndPointService(new Mock<ILogger<EndPointService>>().Object);
             service.Command(request, new Mock<ServerCallContext>().Object);
