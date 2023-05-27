@@ -61,7 +61,6 @@ namespace SpaceBattle.Lib.Test
         {
             var cestrat = new StartEndPointServiceStrategy();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "CreateEndPoint", (object[] args) => cestrat.StartStrategy(args)).Execute();
-
             var thread1 = IoC.Resolve<MyThread>("CreateAll", "thread1");
 
             var games = IoC.Resolve < ConcurrentDictionary < string, string>>("Storage.ThreadByGameID");
