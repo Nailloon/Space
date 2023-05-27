@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option csharp_namespace = "SpaceBattle.gRPC";
+
+package server;
+
+service EndPoint{
+  rpc Command(CommandRequest) returns (CommandReply);
+}
+message CommandForObject{
+	string Key = 1;
+	string Value = 2;
+}
+
+message CommandRequest {
+	string GameId = 1;
+	string CommandType = 2;
+	string GameItemId = 3;
+	repeated CommandForObject Args = 4;
+}
+
+message CommandReply {
+  int32 status = 1;
+}
