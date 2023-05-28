@@ -15,11 +15,11 @@ namespace SpaceBattle.Exceptions
 
             if (!dictExceptionHandlers.ContainsKey(exception) || !dictExceptionHandlers[exception].ContainsKey(command))
             {
-                throw new KeyNotFoundException("Handler not found for the command and exception");
+                throw (Exception)(exception.Data["Unknown"] = command);
             }
             else
             {
-                return dictExceptionHandlers[exception][command];
+                return dictExceptionHandlers[exception][command].StartStrategy();
             }
         }
     }

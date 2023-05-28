@@ -11,7 +11,7 @@ namespace SpaceBattle.GameCommand
         public RepeatGameCommand(string id, object scope)
         {
             this.id = id;
-            gameCommand = new GameCommand(id);
+            this.gameCommand = new GameCommand(id);
             this.scope = scope;
         }
         public void Execute()
