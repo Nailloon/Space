@@ -22,7 +22,7 @@ namespace SpaceBattle.SuperGameCommand
             gameCommand.Execute();
 
             var threadID = IoC.Resolve<string>("Storage.GetThreadByGameID", id);
-            IoC.Resolve<ICommand>("SendCommandByThreadIDStrategy", threadID, this).Execute();
+            IoC.Resolve<ICommand>("SendCommandByThreadIDStrategy", threadID, new RepeatGameCommand(this.id, this.scope)).Execute();
 
             IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", initialScope).Execute();
         }
