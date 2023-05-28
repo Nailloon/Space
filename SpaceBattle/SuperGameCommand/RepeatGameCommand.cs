@@ -1,7 +1,7 @@
 ﻿using ICommand = SpaceBattle.Interfaces.ICommand;
 using Hwdtech;
 
-namespace SpaceBattle.GameCommand
+namespace SpaceBattle.SuperGameCommand
 {
     public class RepeatGameCommand: ICommand
     {
@@ -16,11 +16,12 @@ namespace SpaceBattle.GameCommand
         }
         public void Execute()
         {
-            var initialScope = IoC.Resolve<object>("Scopes.Current");
+            var initialScope = IoC.Resolve<object>("ThreadScope.Current", id);
             IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", this.scope).Execute();
 
-            this.gameCommand.Execute();
-            var threadID = IoC.Resolve<string>("Storage.GetThreadByGameID", this.id);
+            gameCommand.Execute();
+
+            var threadID = IoC.Resolve<string>("Storage.GetThreadByGameID", id);
             IoC.Resolve<ICommand>("SendCommandByThreadIDStrategy", threadID, this).Execute();
 
             IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", initialScope).Execute();

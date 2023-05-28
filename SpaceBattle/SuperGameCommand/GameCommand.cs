@@ -2,7 +2,7 @@
 using Hwdtech;
 using ICommand = SpaceBattle.Interfaces.ICommand;
 
-namespace SpaceBattle.GameCommand
+namespace SpaceBattle.SuperGameCommand
 {
     public class GameCommand: ICommand
     {
@@ -28,7 +28,7 @@ namespace SpaceBattle.GameCommand
                 }
                 catch(Exception exception)
                 {
-                    IoC.Resolve<ICommand>("HandleException", exception, command!);
+                    IoC.Resolve<ICommand>("GameHandleException", exception, command!);
                 }
             }
             stopwatch.Stop();
