@@ -10,10 +10,10 @@ using SpaceBattle.Exceptions;
 using SpaceBattle.SuperGameCommand;
 using ICommand = SpaceBattle.Interfaces.ICommand;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace SpaceBattle.Lib.Test
 {
-    [Collection("Sequential")]
     public class GameCommandTest
     {
         public GameCommandTest()
@@ -73,12 +73,13 @@ namespace SpaceBattle.Lib.Test
                 return scopes[(string)args[0]];
             }).Execute();
 
+            var quantum = new TimeSpan(0, 0, 0, 0, 100);
+            var quantumStrategy = new Mock<IStrategy>();
+            quantumStrategy.Setup(_strategy => _strategy.StartStrategy(It.IsAny<object[]>())).Returns(quantum);
+
             var th1 = IoC.Resolve<MyThread>("CreateAll", "thread1");
             IoC.Resolve<ICommand>("SendCommandByThreadID", "thread1", new ActionCommand(() => {
                 IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", gameScope).Execute();
-                var quantum = new TimeSpan(0, 0, 0, 0, 100);
-                var quantumStrategy = new Mock<IStrategy>();
-                quantumStrategy.Setup(_strategy => _strategy.StartStrategy(It.IsAny<object[]>())).Returns(quantum);
                 IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "QuantumForGame", (object[] args) => quantumStrategy.Object.StartStrategy()).Execute();
                 IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.ScopeByGameID", (object[] args) => scopeGameDict).Execute();
                 IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "SendCommandByThreadIDStrategy", (object[] args) => sendCommandByThreadID.StartStrategy(args)).Execute();
@@ -107,6 +108,11 @@ namespace SpaceBattle.Lib.Test
             IoC.Resolve<ICommand>("SendCommandByThreadID", "thread1", new ActionCommand(() => { mre2.Set(); })).Execute();
             Assert.False(th1.QueueIsEmpty());
             mre2.WaitOne();
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            repeatGameCommand.Execute(); // вызываем метод, который мы хотим проверить
+            stopwatch.Stop();
+            Assert.True(stopwatch.ElapsedMilliseconds < 150);
         }
     }
 }
