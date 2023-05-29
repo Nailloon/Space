@@ -49,7 +49,7 @@ namespace SpaceBattle.Lib.Test
                 return dict[(string)args[0]];
             }
             ).Execute();
- 
+            
         }
         [Fact]
         public void GameCommandWithoutExceptionSuccessfulTest()
@@ -110,9 +110,42 @@ namespace SpaceBattle.Lib.Test
             mre2.WaitOne();
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            repeatGameCommand.Execute(); // вызываем метод, который мы хотим проверить
+            repeatGameCommand.Execute();
             stopwatch.Stop();
             Assert.True(stopwatch.ElapsedMilliseconds < 150);
+        }
+        [Fact]
+        public void GameCommandWithExceptionTest()
+        {
+            var exceptionCommandStrategyDictionary = new Dictionary<Exception, Dictionary<ICommand, IStrategy>>();
+            IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Dictionary.Handler.Exception", (object[] args) => { return exceptionCommandStrategyDictionary; }).Execute();
+            var exceptCommandStrategyDictionary = IoC.Resolve<Dictionary<Exception, Dictionary<ICommand, IStrategy>>>("Dictionary.Handler.Exception");
+            var commandStrategyDictionary = new Dictionary<ICommand, IStrategy>();
+
+            var argException = new ArgumentException();
+            var mockCommand = new Mock<ICommand>();
+            mockCommand.Setup(_command => _command.Execute()).Throws(argException);
+
+            var verifyCommand = new ActionCommand(() => { Assert.Throws<ArgumentException>(() => mockCommand.Object.Execute()); });
+
+            var mockStrategy = new Mock<IStrategy>();
+            mockStrategy.Setup(_strategy => _strategy.StartStrategy(It.IsAny<object[]>())).Returns(verifyCommand).Verifiable();
+            
+            commandStrategyDictionary.TryAdd(mockCommand.Object, mockStrategy.Object);
+            exceptCommandStrategyDictionary.TryAdd(argException, commandStrategyDictionary);
+
+            var handleExceptionStrategy = new HandleExceptionStrategy();
+            IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "HandleException", (object[] args) => handleExceptionStrategy.StartStrategy(args)).Execute();
+
+            var quantum = new TimeSpan(0, 0, 0, 0, 500);
+            var quantumStrategy = new Mock<IStrategy>();
+            quantumStrategy.Setup(_strategy => _strategy.StartStrategy(It.IsAny<object[]>())).Returns(quantum);
+            IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "QuantumForGame", (object[] args) => quantumStrategy.Object.StartStrategy()).Execute();
+            
+            var gameCommand = new GameCommand("game1");
+            gameCommand.Enqueue(mockCommand.Object);
+            gameCommand.Execute();
+            mockStrategy.Verify();
         }
     }
 }

@@ -33,5 +33,9 @@ namespace SpaceBattle.SuperGameCommand
             }
             stopwatch.Stop();
         }
+        public void Enqueue(ICommand command)
+        {
+            queue.Enqueue(command);
+        }
     }
 }
