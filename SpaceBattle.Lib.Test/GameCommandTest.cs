@@ -137,7 +137,7 @@ namespace SpaceBattle.Lib.Test
             var handleExceptionStrategy = new HandleExceptionStrategy();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "HandleException", (object[] args) => handleExceptionStrategy.StartStrategy(args)).Execute();
 
-            var quantum = new TimeSpan(0, 0, 0, 0, 500);
+            var quantum = new TimeSpan(0, 0, 0, 0, 250);
             var quantumStrategy = new Mock<IStrategy>();
             quantumStrategy.Setup(_strategy => _strategy.StartStrategy(It.IsAny<object[]>())).Returns(quantum);
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "QuantumForGame", (object[] args) => quantumStrategy.Object.StartStrategy()).Execute();
