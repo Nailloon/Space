@@ -26,11 +26,11 @@ namespace SpaceBattle.SuperGameCommand
                 var retrieved = queue.TryDequeue(out var command);
                 try
                 {
-                    command.Execute();
+                    command!.Execute();
                 }
                 catch (Exception exception)
                 {
-                    IoC.Resolve<ICommand>("HandleException", exception, command);
+                    IoC.Resolve<ICommand>("HandleException", exception, command!);
                 }
             }
             stopwatch.Stop();
