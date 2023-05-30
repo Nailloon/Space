@@ -23,7 +23,7 @@ namespace SpaceBattle.SuperGameCommand
             {
                 if (queue.Count() == 0)
                     break;
-                var retrieved = queue.TryDequeue(out var command);
+                var command = queue.Dequeue();
                 try
                 {
                     command!.Execute();
