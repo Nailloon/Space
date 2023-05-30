@@ -21,8 +21,6 @@ namespace SpaceBattle.SuperGameCommand
 
             gameCommand.Execute();
 
-            var threadID = IoC.Resolve<string>("Storage.GetThreadByGameID", id);
-
             IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", initialScope).Execute();
         }
     }
