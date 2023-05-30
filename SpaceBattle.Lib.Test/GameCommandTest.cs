@@ -100,7 +100,7 @@ namespace SpaceBattle.Lib.Test
             })).Execute();
             mre1.WaitOne();
             var queue = new Queue<ICommand>();
-            var repeatGameCommand = new RepeatGameCommand("game1", gameScope, queue);
+            var repeatGameCommand = new MacroGameCommand("game1", gameScope, queue);
             var games = IoC.Resolve<ConcurrentDictionary<string, string>>("Storage.ThreadByGameID");
             games.TryAdd("game1", "thread1");
             var mre2 = new ManualResetEvent(false);
