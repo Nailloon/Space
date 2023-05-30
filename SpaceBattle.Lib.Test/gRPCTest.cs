@@ -73,10 +73,11 @@ namespace SpaceBattle.Lib.Test
             ).Execute();
             var mre1 = new ManualResetEvent(false);
             var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", "thread1");
-            IoC.Resolve<ICommand>("SendCommand", sender, new ActionCommand(() => { mre1.Set(); })).Execute();
             var endp = IoC.Resolve<ICommand>("CreateEndPoint");
             var service = new EndPointService(new Mock<ILogger<EndPointService>>().Object);
             service.Command(request, new Mock<ServerCallContext>().Object);
+            IoC.Resolve<ICommand>("SendCommand", sender, new ActionCommand(() => { mre1.Set(); })).Execute();
+            mre1.WaitOne();
             Assert.True(thread1.QueueIsEmpty());
             cmd.Verify();
         }

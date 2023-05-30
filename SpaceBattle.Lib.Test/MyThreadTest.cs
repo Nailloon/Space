@@ -194,12 +194,12 @@ namespace SpaceBattle.Lib.Test
             Assert.NotNull(hardStopCommand);
             var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", "90");
             var mre1 = new ManualResetEvent(false);
-            IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SendCommand", sender, new ActionCommand(() => { mre1.Set(); })).Execute();
-            var sendCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SendCommand", sender, hardStopCommand);
-            sendCommand.Execute();
+            IoC.Resolve<SpaceBattle.Interfaces.ICommand>("SendCommand", sender, new ActionCommand(() => { 
+                hardStopCommand.Execute();
+                mre1.Set(); }
+            )).Execute();
             mre1.WaitOne(200);
             Assert.True(th6.QueueIsEmpty());
-            mre1.WaitOne(200);
             Assert.True(th6.GetStop());
         }
     }
