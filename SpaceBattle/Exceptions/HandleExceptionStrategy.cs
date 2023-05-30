@@ -9,15 +9,14 @@ namespace SpaceBattle.Exceptions
     {
         public object StartStrategy(params object[] args)
         {
-            var exception = (Exception)args[0];
+            Type exception = args[0].GetType();
             var command = (ICommand)args[1];
 
-            var dictExceptionHandlers = IoC.Resolve<IDictionary<Exception, Dictionary<ICommand, IStrategy>>>("Dictionary.Handler.Exception");
+            var dictExceptionHandlers = IoC.Resolve<IDictionary<Type, Dictionary<ICommand, IStrategy>>>("Dictionary.Handler.Exception");
 
             if (!dictExceptionHandlers.ContainsKey(exception) || !dictExceptionHandlers[exception].ContainsKey(command))
             {
                 var commandData = new Dictionary<string, object>();
-
                 commandData["NoStrategyForCommand"] = command;
                 var ex = new Exception();
                 ex.Data["Unknown"] = ex;

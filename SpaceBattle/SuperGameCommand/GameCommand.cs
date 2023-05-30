@@ -6,13 +6,14 @@ namespace SpaceBattle.SuperGameCommand
 {
     public class GameCommand: ICommand
     {
-        Queue<ICommand> queue = new Queue<ICommand>();
+        Queue<ICommand> queue;
         string gameId;
         Stopwatch stopwatch = new Stopwatch();
 
-        public GameCommand(string gameId)
+        public GameCommand(string gameId, Queue<ICommand> queue)
         {
             this.gameId = gameId;
+            this.queue = queue;
         }
         public void Execute()
         {
@@ -20,22 +21,19 @@ namespace SpaceBattle.SuperGameCommand
             stopwatch.Restart();
             while(stopwatch.Elapsed < quantumOfTime)
             {
+                if (queue.Count() == 0)
+                    break;
                 var retrieved = queue.TryDequeue(out var command);
                 try
                 {
-                    if(retrieved==true)
-                    command!.Execute();
+                    command.Execute();
                 }
-                catch(Exception exception)
+                catch (Exception exception)
                 {
-                    IoC.Resolve<ICommand>("HandleException", exception, command!);
+                    IoC.Resolve<ICommand>("HandleException", exception, command);
                 }
             }
             stopwatch.Stop();
-        }
-        public void Enqueue(ICommand command)
-        {
-            queue.Enqueue(command);
         }
     }
 }

@@ -15,13 +15,13 @@ namespace SpaceBattle.Lib.Test
         {
             new InitScopeBasedIoCImplementationCommand().Execute();
             IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
-            var exceptionCommandStrategyDictionary = new Dictionary<Exception, Dictionary<ICommand, IStrategy>>();
+            var exceptionCommandStrategyDictionary = new Dictionary<Type, Dictionary<ICommand, IStrategy>>();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Dictionary.Handler.Exception", (object[] args) => { return exceptionCommandStrategyDictionary; }).Execute();
         }
         [Fact]
         public void HandlExceptionFindTest()
         {
-            var exceptionCommandStrategyDictionary = IoC.Resolve<Dictionary<Exception, Dictionary<ICommand, IStrategy>>>("Dictionary.Handler.Exception");
+            var exceptionCommandStrategyDictionary = IoC.Resolve<Dictionary<Type, Dictionary<ICommand, IStrategy>>>("Dictionary.Handler.Exception");
             var commandStrategyDictionary = new Dictionary<ICommand, IStrategy>();
 
             var keyCommand = new ActionCommand(() => { });
@@ -32,7 +32,7 @@ namespace SpaceBattle.Lib.Test
             commandStrategyDictionary.TryAdd(keyCommand, mockStrategy.Object);
 
             var exception = new ArgumentException();
-            exceptionCommandStrategyDictionary.TryAdd(exception, commandStrategyDictionary);
+            exceptionCommandStrategyDictionary.TryAdd(exception.GetType(), commandStrategyDictionary);
 
             var handleExceptionStrategy = new HandleExceptionStrategy();
             var exceptionHandlerCommand = handleExceptionStrategy.StartStrategy(exception, keyCommand);
@@ -41,7 +41,7 @@ namespace SpaceBattle.Lib.Test
         [Fact]
         public void HandleExceptionNotFindTest()
         {
-            var exceptionCommandStrategyDictionary = IoC.Resolve<Dictionary<Exception, Dictionary<ICommand, IStrategy>>>("Dictionary.Handler.Exception");
+            var exceptionCommandStrategyDictionary = IoC.Resolve<Dictionary<Type, Dictionary<ICommand, IStrategy>>>("Dictionary.Handler.Exception");
             var commandStrategyDictionary = new Dictionary<ICommand, IStrategy>();
 
             var keyCommand = new ActionCommand(() => { });
@@ -52,7 +52,7 @@ namespace SpaceBattle.Lib.Test
             commandStrategyDictionary.TryAdd(keyCommand, mockStrategy.Object);
 
             var exception = new ArgumentException();
-            exceptionCommandStrategyDictionary.TryAdd(exception, commandStrategyDictionary);
+            exceptionCommandStrategyDictionary.TryAdd(exception.GetType(), commandStrategyDictionary);
 
             var falseException = new InvalidOperationException();
             var handleExceptionStrategy = new HandleExceptionStrategy();
