@@ -1,7 +1,6 @@
 ﻿using ICommand = SpaceBattle.Interfaces.ICommand;
 using SpaceBattle.Interfaces;
 using Hwdtech;
-using SpaceBattle.Server;
 
 namespace SpaceBattle.Exceptions
 {
@@ -19,7 +18,7 @@ namespace SpaceBattle.Exceptions
                 var commandData = new Dictionary<string, object>();
                 commandData["NoStrategyForCommand"] = command;
                 var ex = new Exception();
-                ex.Data["Unknown"] = ex;
+                ex.Data["Unknown"] = commandData;
                 throw ex;
             }
 

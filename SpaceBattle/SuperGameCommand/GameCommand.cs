@@ -30,7 +30,7 @@ namespace SpaceBattle.SuperGameCommand
                 }
                 catch (Exception exception)
                 {
-                    IoC.Resolve<ICommand>("HandleException", exception, command!);
+                    IoC.Resolve<ICommand>("HandleException", exception, command!).Execute();
                 }
             }
             stopwatch.Stop();
