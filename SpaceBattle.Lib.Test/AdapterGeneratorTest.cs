@@ -33,7 +33,7 @@ string exampleIMovable = @"public class IMovable_adapter : SpaceBattle.Move.IMov
         {
             var adapterGeneratorStrategy = new AdapterBuilderStrategy();
             var template = (string)adapterGeneratorStrategy.StartStrategy(typeof(IMovable), typeof(object));
-            Assert.Equal(exampleIMovable.Replace("\r\n","").Replace("    ", ""), template);
+            Assert.Equal(exampleIMovable.Replace("\r\n","").Replace("    ", "").Replace("\n", ""), template);
         }
     }
 }

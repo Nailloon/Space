@@ -74,7 +74,7 @@ public class {{ class_name }} : {{ int_name }} {
                ).ToList()
             };
             var result = this.template.Render(model);
-            return result.Replace("\r\n", "").Replace("    ", "");
+            return result.Replace("\r\n", "").Replace("    ", "").Replace("\n", "");
         }
     }
 }
