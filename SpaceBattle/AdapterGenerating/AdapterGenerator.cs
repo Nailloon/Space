@@ -8,24 +8,22 @@ namespace SpaceBattle.AdapterGenerating
     {
         private Template template = Template.Parse(text:
         @"
-namespace SpaceBattle;
 public class {{ class_name }} : {{ int_name }} {
-    private System.Collections.Generic.IDictionary<string, object> data;
+    private System.Collections.Generic.IDictionary<string, object> target;
     public {{ class_name }}(System.Collections.Generic.IDictionary<string, object> target) {
         this.target = target;
     }
-    {{- for property in properties }}
+    {{for property in properties }}
     public {{ property.type }} {{ property.name }} {
-        {{
-            if property.can_read
-                ""get => IoC.Resolve<{{ property.type }}>("" +UObject.getValue + "", target, {{ property.name }});""
-            end
-            if property.can_write
-                ""set => IoC.Resolve<ICommand>("" + UObject.setValue + "" , target, {{ property.name }}, propertyValue).Execute();""
-            end
-        }}
+            {{if property.can_read}}
+                get => IoC.Resolve<{{property.type}}>(""UObjectGetValue"", target, {{property.name}});
+            {{end}}
+            {{if property.can_write}}
+                set => IoC.Resolve<ICommand>(""UObjectSetValue"", target, {{property.name}}, propertyValue).Execute();
+            {{end}}
     }
-    {{- end }}
+    {{end}}
+        }
         ");
         private IEnumerable<PropertyInfo> propertyInfos;
         private Type dtype;
@@ -59,7 +57,7 @@ public class {{ class_name }} : {{ int_name }} {
         {
             object model = new
             {
-                class_name = dtype.Name + "_adapted",
+                class_name = dtype.Name + "_adapter",
                 int_name = dtype.FullName,
                 properties = this.propertyInfos.Select(
                (PropertyInfo p) =>
@@ -75,7 +73,8 @@ public class {{ class_name }} : {{ int_name }} {
                }
                ).ToList()
             };
-            return this.template.Render(model);
+            var result = this.template.Render(model);
+            return result.Replace("\r\n", "").Replace("    ", "");
         }
     }
 }

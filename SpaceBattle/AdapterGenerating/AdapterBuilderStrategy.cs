@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace SpaceBattle.AdapterGenerating
 {
-    public class AdapterGeneratorStrategy: IStrategy
+    public class AdapterBuilderStrategy: IStrategy
     {
         public object StartStrategy(params object[] args)
         {
@@ -17,7 +17,8 @@ namespace SpaceBattle.AdapterGenerating
             {
                 builder.addMembers("Property", property);
             }
-            return builder.Build();
+            var result = builder.Build();
+            return result;
         }
     }
 }
