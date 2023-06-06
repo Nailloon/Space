@@ -1,11 +1,6 @@
 ﻿using Scriban;
 using SpaceBattle.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceBattle.AdapterGenerating
 {
@@ -17,17 +12,16 @@ namespace SpaceBattle;
 public class {{ class_name }} : {{ int_name }} {
     private System.Collections.Generic.IDictionary<string, object> data;
     public {{ class_name }}(System.Collections.Generic.IDictionary<string, object> target) {
-        this.target = terget;
+        this.target = target;
     }
     {{- for property in properties }}
-    {{ full_property_name = property.type + ""."" + property.name }}
     public {{ property.type }} {{ property.name }} {
         {{
             if property.can_read
-                ""get => ("" + property.type + "")data[\"""" + full_property_name + ""\""];""
+                ""get => IoC.Resolve<{{ property.type }}>("" +UObject.getValue + "", target, {{ property.name }});""
             end
             if property.can_write
-                ""set => IoC.Resolve<ICommand>("" + UObject.setValue + "", object, propertyName, propertyValue).Execute()""
+                ""set => IoC.Resolve<ICommand>("" + UObject.setValue + "" , target, {{ property.name }}, propertyValue).Execute();""
             end
         }}
     }
@@ -35,18 +29,18 @@ public class {{ class_name }} : {{ int_name }} {
         ");
         private IEnumerable<PropertyInfo> propertyInfos;
         private Type dtype;
-        private readonly IDictionary<string, Action<object[]>> configHandlers = new Dictionary<string, Action<object[]>>{
+        private readonly IDictionary<string, Action<object[]>> configurationHandlers = new Dictionary<string, Action<object[]>>{
+        {"Dtype",
+            args => {
+                var ctx = (AdapterGenerator)args[0];
+                ctx.dtype = (Type)args[1];
+            }
+        },
         {"Property",
             args => {
                 var ctx = (AdapterGenerator)args[0];
                 var propInfo = (PropertyInfo)args[1];
                 ctx.propertyInfos = ctx.propertyInfos.Append(propInfo).ToArray();
-            }
-        },
-        {"Dtype",
-            args => {
-                var ctx = (AdapterGenerator)args[0];
-                ctx.dtype = (Type)args[1];
             }
         }
         };
@@ -57,13 +51,31 @@ public class {{ class_name }} : {{ int_name }} {
         }
         public IBuilder addMembers(string param, params object[] args)
         {
-            Action<object[]> handler = configHandlers[param];
+            Action<object[]> handler = configurationHandlers[param];
             handler(new object[] { this }.Concat(args).ToArray());
             return this;
         }
         public object Build()
         {
-            return;
+            object model = new
+            {
+                class_name = dtype.Name + "_adapted",
+                int_name = dtype.FullName,
+                properties = this.propertyInfos.Select(
+               (PropertyInfo p) =>
+               {
+                   object property = new
+                   {
+                       name = p.Name,
+                       type = p.PropertyType.FullName,
+                       can_read = p.CanRead,
+                       can_write = p.CanWrite
+                   };
+                   return property;
+               }
+               ).ToList()
+            };
+            return this.template.Render(model);
         }
     }
 }
