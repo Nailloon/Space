@@ -63,8 +63,8 @@ namespace SpaceBattle.Lib.Test
             transactionManager[currentTrunsactionNumber] = true;
             Assert.Equal(27, uobject.get_property("RotateVelocity"));
         }
-         [Fact]
-        public void NegativeTest_UObject_NotCommittedSetValue()
+        [Fact]
+        public void NegativeTest_UObject_AbortedSetValue()
         {
             Dictionary<int, bool> transactionManager = IoC.Resolve<Dictionary<int, bool>>("TransactionManager.GetManager");
             transactionManager[0] = false;
