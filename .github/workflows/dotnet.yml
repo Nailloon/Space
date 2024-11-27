@@ -1,40 +1,51 @@
-name: .NET
+name: .Net 6 CI Build
 
-on: 
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'     
-        required: true
-        default: 'warning'
-      tags:
-        description: 'Test scenario tags'  
-
+on:
+  push:
+    branches: [ main ]
   pull_request:
-    branches: [ "master"]
+    branches: [ main ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    permissions:
+      pull-requests: write
+    name: CI Build
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
-    - name: Restore dependencies
+
+    - name: Restore Dependencies
       run: dotnet restore
+
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --configuration Release --no-restore
+
     - name: Test
-      run: dotnet test --no-build --collect:"XPlat Code Coverage;Format=opencover" --verbosity normal
-    - name: Find coverage file
-      run: find ./SpaceBattle.Lib.Test/TestResults -name "*.xml" -exec mv {} ./SpaceBattle.Lib.Test/TestResults/coverage.opencover.xml \;
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      run: dotnet test ./SpaceBattle.Lib.Test/ --collect:"XPlat Code Coverage" --settings ./coverlet.runsettings --results-directory ./coverage
+
+    - name: Code Coverage Report
+      uses: irongut/CodeCoverageSummary@v1.3.0
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./SpaceBattle.Lib.Test/TestResults/coverage.opencover.xml
-        
+        filename: ./coverage/**/coverage.cobertura.xml
+        badge: true
+        fail_below_min: true
+        format: markdown
+        hide_branch_rate: true
+        hide_complexity: true
+        indicators: true
+        output: both
+        thresholds: '20 80'
+
+    - name: Add Coverage PR Comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: github.event_name == 'pull_request'
+      with:
+        recreate: true
+        path: code-coverage-results.md
