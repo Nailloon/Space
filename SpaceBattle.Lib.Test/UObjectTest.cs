@@ -28,9 +28,9 @@ namespace SpaceBattle.Lib.Test
         }
 
         [Fact]
-        public void PositiveTest_UObject_CommitedSetValue()
+        public void PositiveTest_UObject_CommitedGetValue()
         {
-             Dictionary<int, bool> transactionManager = IoC.Resolve<Dictionary<int, bool>>("TransactionManager.GetManager");
+            Dictionary<int, bool> transactionManager = IoC.Resolve<Dictionary<int, bool>>("TransactionManager.GetManager");
             transactionManager[0] = true;
             Dictionary<string, ITransactionStatus> properties = new();
             var uobject = new UObject(properties);
@@ -38,9 +38,9 @@ namespace SpaceBattle.Lib.Test
             Assert.Equal(23, uobject.get_property("RotateVelocity"));
         }
         [Fact]
-        public void PositiveTest_UObject_AbortedSetValue()
+        public void NegativeTest_UObject_AbortedGetValue()
         {
-             Dictionary<int, bool> transactionManager = IoC.Resolve<Dictionary<int, bool>>("TransactionManager.GetManager");
+            Dictionary<int, bool> transactionManager = IoC.Resolve<Dictionary<int, bool>>("TransactionManager.GetManager");
             Dictionary<string, ITransactionStatus> properties = new();
             transactionManager[0] = true;
             var uobject = new UObject(properties);
@@ -49,6 +49,33 @@ namespace SpaceBattle.Lib.Test
             uobject.set_property("RotateVelocity", 27);
             transactionManager[currentTrunsactionNumber] = false;
             Assert.Equal(23, uobject.get_property("RotateVelocity"));
+        }
+        [Fact]
+        public void PositiveTest_UObject_CommitedSetValue()
+        {
+            Dictionary<int, bool> transactionManager = IoC.Resolve<Dictionary<int, bool>>("TransactionManager.GetManager");
+            Dictionary<string, ITransactionStatus> properties = new();
+            transactionManager[0] = true;
+            var uobject = new UObject(properties);
+            uobject.set_property("RotateVelocity", 23);
+            var currentTrunsactionNumber = IoC.Resolve<int>("TransactionManager.SetCurrentTransactionID", 1);
+            uobject.set_property("RotateVelocity", 27);
+            transactionManager[currentTrunsactionNumber] = true;
+            Assert.Equal(27, uobject.get_property("RotateVelocity"));
+        }
+         [Fact]
+        public void PosTestSetNotCommittedTransaction()
+        {
+            Dictionary<int, bool> transactionManager = IoC.Resolve<Dictionary<int, bool>>("TransactionManager.GetManager");
+            transactionManager[0] = false;
+            transactionManager[1] = true;
+            Dictionary<string, ITransactionStatus> properties = new();
+            var uobject = new UObject(properties);
+                uobject.set_property("RotateVelocity", 23);
+            IoC.Resolve<int>("TransactionManager.SetCurrentTransactionID", 1);
+            uobject.set_property("RotateVelocity", 27);
+
+            Assert.Equal(27, uobject.get_property("RotateVelocity"));
         }
         [Fact]
         public void NegativeTest_UObject_NoKey_On_GetValue()

@@ -25,11 +25,6 @@ namespace SpaceBattle.Server
             this.transactionValue=newValue;
         }
 
-        public object get_transaction_value()
-        {
-            return transactionValue;
-        }
-
         public object get_value()
         {
             return value;
