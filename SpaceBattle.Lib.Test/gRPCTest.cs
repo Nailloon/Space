@@ -22,8 +22,10 @@ namespace SpaceBattle.Lib.Test
 
             var threadDict = new ConcurrentDictionary<string, MyThread>();
             var senderDict = new ConcurrentDictionary<string, ISender>();
+            var orderDict = new ConcurrentDictionary<string, ISender>();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "ThreadIDMyThreadMapping", (object[] _) => threadDict).Execute();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "ThreadIDSenderMapping", (object[] _) => senderDict).Execute();
+            IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "ThreadIDOrdersSenderMapping", (object[] _) => orderDict).Execute();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "SenderAdapterGetByID", (object[] id) => senderDict[(string)id[0]]).Execute();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "ServerThreadGetByID", (object[] id) => threadDict[(string)id[0]]).Execute();
 

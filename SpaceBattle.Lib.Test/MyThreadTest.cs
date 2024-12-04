@@ -19,8 +19,10 @@ namespace SpaceBattle.Lib.Test
 
             var threadDict = new ConcurrentDictionary<string, MyThread>();
             var senderDict = new ConcurrentDictionary<string, ISender>();
+            var orderDict = new ConcurrentDictionary<string, ISender>();
             IoC.Resolve<ICommand>("IoC.Register", "ThreadIDMyThreadMapping", (object[] _) => threadDict).Execute();
             IoC.Resolve<ICommand>("IoC.Register", "ThreadIDSenderMapping", (object[] _) => senderDict).Execute();
+            IoC.Resolve<ICommand>("IoC.Register", "ThreadIDOrdersSenderMapping", (object[] _) => orderDict).Execute();
             IoC.Resolve<ICommand>("IoC.Register", "SenderAdapterGetByID", (object[] id) => senderDict[(string)id[0]]).Execute();
             IoC.Resolve<ICommand>("IoC.Register", "ServerThreadGetByID", (object[] id) => threadDict[(string)id[0]]).Execute();
 
@@ -75,7 +77,10 @@ namespace SpaceBattle.Lib.Test
             BlockingCollection<SpaceBattle.Interfaces.ICommand> que = new BlockingCollection<SpaceBattle.Interfaces.ICommand>(100);
             var sender = new SenderAdapter(que);
             var receiver = IoC.Resolve<IReceiver>("CreateReceiverAdapter", que);
-            var MT = IoC.Resolve<MyThread>("CreateAndStartThread", "78", sender, receiver);
+            BlockingCollection<SpaceBattle.Interfaces.ICommand> orders = new BlockingCollection<SpaceBattle.Interfaces.ICommand>(100);
+            var sender1 = new SenderAdapter(orders);
+            var receiver1 = IoC.Resolve<IReceiver>("CreateReceiverAdapter", orders);
+            var MT = IoC.Resolve<MyThread>("CreateAndStartThread", "78", sender, receiver, sender1, receiver1);
             Assert.True(MT.QueueIsEmpty());
             Assert.False(MT.GetStop());
             Assert.NotNull(IoC.Resolve<MyThread>("ServerThreadGetByID", "78"));
@@ -88,7 +93,10 @@ namespace SpaceBattle.Lib.Test
             BlockingCollection<SpaceBattle.Interfaces.ICommand> que = new BlockingCollection<SpaceBattle.Interfaces.ICommand>(100);
             var sender1 = new SenderAdapter(que);
             var receiver1 = IoC.Resolve<IReceiver>("CreateReceiverAdapter", que, () => { mre1.Set(); });
-            var Th1 = IoC.Resolve<MyThread>("CreateAndStartThread", "8367", sender1, receiver1);
+            BlockingCollection<SpaceBattle.Interfaces.ICommand> orders = new BlockingCollection<SpaceBattle.Interfaces.ICommand>(100);
+            var sender2 = new SenderAdapter(orders);
+            var receiver2 = IoC.Resolve<IReceiver>("CreateReceiverAdapter", orders);
+            var Th1 = IoC.Resolve<MyThread>("CreateAndStartThread", "8367", sender1, receiver1, sender2, receiver2);
             Assert.True(Th1.Equals(IoC.Resolve<MyThread>("ServerThreadGetByID", "8367")));
             mre1.WaitOne(200);
 
