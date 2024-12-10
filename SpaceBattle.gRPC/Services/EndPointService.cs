@@ -6,11 +6,9 @@ namespace SpaceBattle.gRPC.Services
 {
     public class EndPointService : EndPoint.EndPointBase
     {
-        private readonly ILogger<EndPointService> _logger;
         private IRouter _router;
-        public EndPointService(ILogger<EndPointService> logger, IRouter router)
+        public EndPointService(IRouter router)
         {
-            _logger = logger;
             _router = router;
         }
 

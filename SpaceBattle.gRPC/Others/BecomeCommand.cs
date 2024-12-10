@@ -15,7 +15,7 @@ using IStrategy = SpaceBattle.Interfaces.IStrategy;
         }
         public void Execute()
         {
-            var orderProperties = IoC.Resolve<IStrategy>("ProtobufMapToDictionary", _orderMap).StartStrategy();
+            Dictionary<string,string> orderProperties = IoC.Resolve<Dictionary<string,string>>("ProtobufMapToDictionary", _orderMap);
             ICommand command = IoC.Resolve<ICommand>("OrderDictionaryToICommand", orderProperties);
             IoC.Resolve<IStrategy>("SendCommandToGame", _gameId, command).StartStrategy();
         }

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using SpaceBattle.gRPC.Others;
 using SpaceBattle.Interfaces;
 
@@ -5,9 +6,9 @@ namespace SpaceBattle.gRPC
 {
     public class Router : IRouter
     {
-        Dictionary<string, string> _threadIdByGameIdDictionary;
-        Dictionary<string, ISender> _senderByThreadIdDictionary;
-        public Router(Dictionary<string, string> threadIdByGameIdDictionary, Dictionary<string, ISender> senderByThreadIdDictionary){
+        ConcurrentDictionary<string, string> _threadIdByGameIdDictionary;
+        ConcurrentDictionary<string, ISender> _senderByThreadIdDictionary;
+        public Router(ConcurrentDictionary<string, string> threadIdByGameIdDictionary, ConcurrentDictionary<string, ISender> senderByThreadIdDictionary){
             _threadIdByGameIdDictionary = threadIdByGameIdDictionary;
             _senderByThreadIdDictionary = senderByThreadIdDictionary;
         }

@@ -11,7 +11,7 @@ namespace SpaceBattle.ServerStrategies
         public object StartStrategy(params object[] args)
         {
             BlockingCollection<ICommand> que = new BlockingCollection<ICommand>(100);
-            BlockingCollection<ICommand> ords = new BlockingCollection<ICommand>(100);
+            BlockingCollection<ICommand> ords = new BlockingCollection<ICommand>();
             var sender = new SenderAdapter(que);
             if (args.Length > 1)
             {
