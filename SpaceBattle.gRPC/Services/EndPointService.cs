@@ -1,8 +1,5 @@
 using Grpc.Core;
 using Hwdtech;
-using SpaceBattle.Interfaces;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
 using ICommand = SpaceBattle.Interfaces.ICommand;
 
 namespace SpaceBattle.gRPC.Services
@@ -10,9 +7,11 @@ namespace SpaceBattle.gRPC.Services
     public class EndPointService : EndPoint.EndPointBase
     {
         private readonly ILogger<EndPointService> _logger;
-        public EndPointService(ILogger<EndPointService> logger)
+        private IRouter _router;
+        public EndPointService(ILogger<EndPointService> logger, IRouter router)
         {
             _logger = logger;
+            _router = router;
         }
 
         public override Task<CommandReply> Command(CommandRequest request, ServerCallContext context)
@@ -24,6 +23,15 @@ namespace SpaceBattle.gRPC.Services
             return Task.FromResult(new CommandReply
             {
                 Status = 202
+            });
+        }
+        
+        public override Task<OrderReply> Order(OrderRequest request, ServerCallContext context)
+        {
+            bool isRouted = _router.route(request.GameId, request.Map);
+            return Task.FromResult(new OrderReply
+            {
+                Status = isRouted
             });
         }
     }
