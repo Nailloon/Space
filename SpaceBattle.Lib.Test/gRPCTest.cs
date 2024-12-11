@@ -11,6 +11,7 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using SpaceBattle.gRPC.Services;
 using SpaceBattleGrpc.Others;
+using SpaceBattle.gRPC.Router;
 namespace SpaceBattle.Lib.Test
 {
     public class gRPCTest
