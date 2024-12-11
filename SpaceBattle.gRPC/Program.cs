@@ -23,7 +23,6 @@ gamesDictionary.TryAdd("2", gameQueue2);
 ICommand gameCommand1 = new GameCommand("1", gameQueue1);
 ICommand gameCommand2 = new GameCommand("2", gameQueue2);
 gamesThreadsDictionary.TryAdd("1", "80");
-gamesThreadsDictionary.TryAdd("2", "81");
 
 Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "ThreadIDMyThreadMapping", (object[] _) => threadDict).Execute();
 Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "ThreadIDSenderMapping", (object[] _) => senderDict).Execute();
@@ -34,7 +33,7 @@ var createAndStartThreadStrategy = new CreateAndStartThreadStrategy();
 Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "CreateAndStartThread", (object[] args) => createAndStartThreadStrategy.StartStrategy(args)).Execute();
 var createReceiverAdapterStrategy = new CreateReceiverAdapterStrategy();
 Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "CreateReceiverAdapter", (object[] args) => createReceiverAdapterStrategy.StartStrategy(args)).Execute();
-Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "QuantumForGame", (object[] _) => (object)new TimeSpan(0, 0, 0, 0, 1)).Execute();
+Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "QuantumForGame", (object[] _) => (object)new TimeSpan(0, 0, 0, 40, 0)).Execute();
 var protobufMapToDictionaryStrategy = new ProtobufMapToDictionaryStrategy();
 Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "ProtobufMapToDictionary", (object[] args) => protobufMapToDictionaryStrategy.StartStrategy(args)).Execute();
 ICommand emptyCommand = new ActionCommand(()=>{});
@@ -42,14 +41,13 @@ Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "OrderDictionaryToICommand
 Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "SendCommandToGame", (object[] args) => gamesDictionary[(string)args[0]].Append((ICommand)args[1])).Execute();
 
 var th1 = Hwdtech.IoC.Resolve<MyThread>("CreateAll", "80");
-var th2 = Hwdtech.IoC.Resolve<MyThread>("CreateAll", "81");
 IRouter router = new Router(gamesThreadsDictionary, orderSenderDict);
+EndPointService endpoint = new EndPointService(router);
 
 var builder = WebApplication.CreateBuilder();
+builder.Services.AddSingleton(endpoint);
 builder.Services.AddGrpc();
-builder.Services.AddSingleton(new EndPointService(router));
 
 WebApplication app = builder.Build();
 app.MapGrpcService<EndPointService>();
-
 app.Run();

@@ -24,13 +24,14 @@ namespace SpaceBattle.gRPC.Services
             });
         }
         
-        public override Task<OrderReply> Order(OrderRequest request, ServerCallContext context)
+        public override async Task<OrderReply> Order(IAsyncStreamReader<OrderRequest> requestStream, IServerStreamWriter<OrderReply> responseStream, ServerCallContext context)
         {
-            bool isRouted = _router.route(request.GameId, request.Map);
-            return Task.FromResult(new OrderReply
+           await foreach (var message in requestStream.ReadAllAsync())
             {
-                Status = isRouted
-            });
+                bool isRouted = _router.route(message.GameId, message.Map);
+                await responseStream.WriteAsync(new OrderReply(){Status = isRouted});
+            }
+            return new OrderReply();
         }
     }
 }
