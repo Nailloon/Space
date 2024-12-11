@@ -1,12 +1,11 @@
 using System.Collections.Concurrent;
-using SpaceBattle.gRPC;
 using SpaceBattle.gRPC.Others;
 using SpaceBattle.gRPC.Services;
 using SpaceBattle.Interfaces;
 using SpaceBattle.Server;
 using SpaceBattle.ServerStrategies;
 using SpaceBattle.SuperGameCommand;
-using IRouter = SpaceBattle.gRPC.IRouter;
+using IRouter = SpaceBattle.gRPC.Router.IRouter;
 
 new Hwdtech.Ioc.InitScopeBasedIoCImplementationCommand().Execute();
 Hwdtech.IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", Hwdtech.IoC.Resolve<object>("Scopes.New", Hwdtech.IoC.Resolve<object>("Scopes.Root"))).Execute();
@@ -41,7 +40,7 @@ Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "OrderDictionaryToICommand
 Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "SendCommandToGame", (object[] args) => gamesDictionary[(string)args[0]].Append((ICommand)args[1])).Execute();
 
 var th1 = Hwdtech.IoC.Resolve<MyThread>("CreateAll", "80");
-IRouter router = new Router(gamesThreadsDictionary, orderSenderDict);
+IRouter router = new SpaceBattle.gRPC.Router.Router(gamesThreadsDictionary, orderSenderDict);
 EndPointService endpoint = new EndPointService(router);
 
 var builder = WebApplication.CreateBuilder();

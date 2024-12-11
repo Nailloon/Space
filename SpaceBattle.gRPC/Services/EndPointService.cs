@@ -1,13 +1,13 @@
 using Grpc.Core;
 using Hwdtech;
 using ICommand = SpaceBattle.Interfaces.ICommand;
-
+using SpaceBattle.gRPC.Router;
 namespace SpaceBattle.gRPC.Services
 {
     public class EndPointService : EndPoint.EndPointBase
     {
-        private IRouter _router;
-        public EndPointService(IRouter router)
+        private Router.IRouter _router;
+        public EndPointService(Router.IRouter router)
         {
             _router = router;
         }

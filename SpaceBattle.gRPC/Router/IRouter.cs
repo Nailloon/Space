@@ -1,4 +1,4 @@
-namespace SpaceBattle.gRPC;
+namespace SpaceBattle.gRPC.Router;
 
     public interface IRouter
     {

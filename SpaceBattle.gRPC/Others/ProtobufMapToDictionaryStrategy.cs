@@ -2,7 +2,7 @@ namespace SpaceBattle.gRPC.Others;
 
 using SpaceBattle.Interfaces;
 
-class ProtobufMapToDictionaryStrategy : IStrategy
+public class ProtobufMapToDictionaryStrategy : IStrategy
 {
     public object StartStrategy(params object[] args)
     {

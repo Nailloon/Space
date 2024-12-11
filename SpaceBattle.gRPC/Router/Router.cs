@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using SpaceBattle.gRPC.Others;
 using SpaceBattle.Interfaces;
 
-namespace SpaceBattle.gRPC
+namespace SpaceBattle.gRPC.Router
 {
     public class Router : IRouter
     {
