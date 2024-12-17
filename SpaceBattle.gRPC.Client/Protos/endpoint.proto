@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "SpaceBattle.gRPC";
+option csharp_namespace = "SpaceBattle.gRPC.Client";
 
 package server;
 
@@ -10,7 +10,6 @@ service EndPoint{
   rpc MigrateGame (gameStatus) returns (newGameStatus);
   rpc AcceptGame (serializedGameMessage) returns (acceptStatus);
 }
-
 message CommandForObject{
 	string Key = 1;
 	string Value = 2;
