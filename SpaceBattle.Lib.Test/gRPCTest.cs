@@ -11,6 +11,7 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using SpaceBattle.gRPC.Services;
 using SpaceBattleGrpc.Others;
+using SpaceBattle.gRPC.Router;
 namespace SpaceBattle.Lib.Test
 {
     public class gRPCTest
@@ -22,8 +23,10 @@ namespace SpaceBattle.Lib.Test
 
             var threadDict = new ConcurrentDictionary<string, MyThread>();
             var senderDict = new ConcurrentDictionary<string, ISender>();
+            var orderDict = new ConcurrentDictionary<string, ISender>();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "ThreadIDMyThreadMapping", (object[] _) => threadDict).Execute();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "ThreadIDSenderMapping", (object[] _) => senderDict).Execute();
+            IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "ThreadIDOrdersSenderMapping", (object[] _) => orderDict).Execute();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "SenderAdapterGetByID", (object[] id) => senderDict[(string)id[0]]).Execute();
             IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "ServerThreadGetByID", (object[] id) => threadDict[(string)id[0]]).Execute();
 
@@ -74,7 +77,7 @@ namespace SpaceBattle.Lib.Test
             var mre1 = new ManualResetEvent(false);
             var sender = IoC.Resolve<ISender>("SenderAdapterGetByID", "thread1");
             var endp = IoC.Resolve<ICommand>("CreateEndPoint");
-            var service = new EndPointService(new Mock<ILogger<EndPointService>>().Object);
+            var service = new EndPointService(new Mock<IRouter>().Object);
             service.Command(request, new Mock<ServerCallContext>().Object);
             IoC.Resolve<ICommand>("SendCommand", sender, new ActionCommand(() => { mre1.Set(); })).Execute();
             mre1.WaitOne();

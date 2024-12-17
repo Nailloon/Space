@@ -1,18 +1,15 @@
 using Grpc.Core;
 using Hwdtech;
-using SpaceBattle.Interfaces;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
 using ICommand = SpaceBattle.Interfaces.ICommand;
-
+using SpaceBattle.gRPC.Router;
 namespace SpaceBattle.gRPC.Services
 {
     public class EndPointService : EndPoint.EndPointBase
     {
-        private readonly ILogger<EndPointService> _logger;
-        public EndPointService(ILogger<EndPointService> logger)
+        private Router.IRouter _router;
+        public EndPointService(Router.IRouter router)
         {
-            _logger = logger;
+            _router = router;
         }
 
         public override Task<CommandReply> Command(CommandRequest request, ServerCallContext context)
@@ -25,6 +22,16 @@ namespace SpaceBattle.gRPC.Services
             {
                 Status = 202
             });
+        }
+        
+        public override async Task<OrderReply> Order(IAsyncStreamReader<OrderRequest> requestStream, IServerStreamWriter<OrderReply> responseStream, ServerCallContext context)
+        {
+           await foreach (var message in requestStream.ReadAllAsync())
+            {
+                bool isRouted = _router.route(message.GameId, message.Map);
+                await responseStream.WriteAsync(new OrderReply(){Status = isRouted});
+            }
+            return new OrderReply();
         }
     }
 }

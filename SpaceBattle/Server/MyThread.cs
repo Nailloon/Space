@@ -5,9 +5,10 @@ namespace SpaceBattle.Server
 {
     public class MyThread
     {
-        public MyThread(IReceiver queue)
+        public MyThread(IReceiver queue, IReceiver orderQueue)
         {
             this.queue = queue;
+            this.orderQueue = orderQueue;
             strategy = new Action(() =>
             {
                 HandleCommand();
@@ -22,6 +23,7 @@ namespace SpaceBattle.Server
         }
         internal bool stop = false;
         private IReceiver queue;
+        private IReceiver orderQueue;
         private Thread thread;
         private Action strategy;
         public void Stop()
@@ -34,15 +36,12 @@ namespace SpaceBattle.Server
         }
         internal void HandleCommand()
         {
-            SpaceBattle.Interfaces.ICommand cmd = this.queue.Receive();
-            try
-            {
-                cmd.Execute();
-            }catch(Exception e)
-            {
-                var exceptionCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("HandleException", e, cmd);
-                exceptionCommand.Execute();
+            if (!orderQueue.IsEmpty()){
+                SpaceBattle.Interfaces.ICommand order = orderQueue.Receive();
+                tryExecute(order);
             }
+            SpaceBattle.Interfaces.ICommand cmd = queue.Receive();
+            tryExecute(cmd);
         }
         public void UpdateBehavior(Action newBeh)
         {
@@ -59,6 +58,18 @@ namespace SpaceBattle.Server
         public bool Equals(Thread thread)
         {
             return this.thread == thread;
+        }
+        internal void tryExecute(SpaceBattle.Interfaces.ICommand command)
+        {
+            try
+            {
+                command.Execute();
+            }
+            catch(Exception e)
+            {
+                var exceptionCommand = IoC.Resolve<SpaceBattle.Interfaces.ICommand>("HandleException", e, command);
+                exceptionCommand.Execute();
+            }
         }
     }
 }
