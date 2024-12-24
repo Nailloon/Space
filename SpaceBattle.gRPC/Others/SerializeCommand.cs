@@ -19,7 +19,7 @@ namespace SpaceBattle.gRPC.Others
         public void Execute()
         {
             IoC.Resolve<Interfaces.ICommand>("StopGameCommandExecuting").Execute();
-            List<string> gameOptions= IoC.Resolve<List<string>>("Game.Options.GetAll", gameId);
+            List<string> gameOptions = IoC.Resolve<List<string>>("Game.Options.GetAll", gameId);
             Dictionary<string, object> gameObjects = IoC.Resolve<Dictionary<string, object>>("Game.Objects.GetAll", gameId);
             Queue<Interfaces.ICommand> gameQueue = IoC.Resolve<Queue<Interfaces.ICommand>>("Game.Queue.Get", gameId);
             TimeSpan timespan = IoC.Resolve<TimeSpan>("Game.Get.Timespan", gameId);
@@ -46,7 +46,7 @@ namespace SpaceBattle.gRPC.Others
 
             serializedString += timespan.ToString();
 
-            EndPointClient.Call(newServerId, serializedString);
+            IoC.Resolve<Interfaces.ICommand>("EndPointClientCall", newServerId, serializedString).Execute();
         }
     }
 }
