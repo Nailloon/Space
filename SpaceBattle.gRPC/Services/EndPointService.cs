@@ -1,7 +1,6 @@
 using Grpc.Core;
 using Hwdtech;
 using ICommand = SpaceBattle.Interfaces.ICommand;
-using SpaceBattle.gRPC.Router;
 namespace SpaceBattle.gRPC.Services
 {
     public class EndPointService : EndPoint.EndPointBase
@@ -32,6 +31,26 @@ namespace SpaceBattle.gRPC.Services
                 await responseStream.WriteAsync(new OrderReply(){Status = isRouted});
             }
             return new OrderReply();
+        }
+
+        public async override Task<newGameStatus> MigrateGame(gameStatus request, ServerCallContext context)
+        {
+            string gameId = request.GameId;
+            bool isRouted = _router.routeMigrateCommand(request.NewServerId, gameId);
+            return await Task.FromResult(new newGameStatus
+            {
+                GameStatus = isRouted
+            });
+        }
+
+        public override Task<acceptStatus> AcceptGame(serializedGameMessage request, ServerCallContext context)
+        {
+            string serializedGame = request.SerializedGame;
+            bool isRouted = _router.routeAcceptCommand(serializedGame);
+            return Task.FromResult(new acceptStatus
+            {
+                AcceptStatus = isRouted
+            });
         }
     }
 }

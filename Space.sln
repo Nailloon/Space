@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решен
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceBattle.gRPC", "SpaceBattle.gRPC\SpaceBattle.gRPC.csproj", "{D32BFFC6-19C7-4D73-A34F-7823B4C03E7E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceBattle.gRPC.Client", "SpaceBattle.gRPC.Client\SpaceBattle.gRPC.Client.csproj", "{268E370C-6BCC-4357-AD10-1C0B61F8185B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{D32BFFC6-19C7-4D73-A34F-7823B4C03E7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D32BFFC6-19C7-4D73-A34F-7823B4C03E7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D32BFFC6-19C7-4D73-A34F-7823B4C03E7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{268E370C-6BCC-4357-AD10-1C0B61F8185B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{268E370C-6BCC-4357-AD10-1C0B61F8185B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{268E370C-6BCC-4357-AD10-1C0B61F8185B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{268E370C-6BCC-4357-AD10-1C0B61F8185B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
