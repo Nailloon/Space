@@ -209,7 +209,7 @@ public class MigrateGameTest
         mre0.WaitOne();
         var newStatus = router.routeAcceptCommand(serilaizedString);
         sender.Send(new ActionCommand(()=>mre1.Set()));
-        mre1.WaitOne();
+        mre1.WaitOne(200);
         Assert.IsType<bool>(newStatus);
         Assert.True(newStatus);
         deserializeStrategy.Verify();

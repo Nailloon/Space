@@ -165,7 +165,7 @@ namespace SpaceBattle.Lib.Test
             mockCommand3.Verify();
             mockCommand4.Verify();
             mockCommand2.Verify();
-            mre1.WaitOne();
+            mre1.WaitOne(200);
             Assert.True(th1.QueueIsEmpty());
             Assert.True(th1.GetStop());
         }
