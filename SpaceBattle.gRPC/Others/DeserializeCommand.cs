@@ -53,15 +53,7 @@ namespace SpaceBattle.gRPC.Others
             }
             TimeSpan timespan = IoC.Resolve<TimeSpan>("DeserializeTimespan", serializedData[3]);
 
-            var gameScope = IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"));
-            var initialScope = IoC.Resolve<object>("ThreadScope.Current", threadId);
-            IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", gameScope).Execute();
-            
-            IoC.Resolve<Interfaces.ICommand>("Scope.Current.RegisterOptions", gameOptions).Execute();
-            IoC.Resolve<Interfaces.ICommand>("Game.AddObjects", gameObjects).Execute();
-            IoC.Resolve<Interfaces.ICommand>("QuantumForGame.Set").Execute();
-
-            IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", initialScope).Execute();
+            var gameScope = IoC.Resolve<object>("Game.Scope.Create", gameOptions, gameObjects, timespan);
             string idForNewGame = IoC.Resolve<string>("ThreadScope.GameId.New");
             Interfaces.ICommand newGameCommand = new MacroGameCommand(idForNewGame, gameScope, gameQueue);
             ISender senderToCurrentThreadQueue = IoC.Resolve<ISender>("MySender");

@@ -40,8 +40,10 @@ namespace SpaceBattle.Server
                 SpaceBattle.Interfaces.ICommand order = orderQueue.Receive();
                 tryExecute(order);
             }
-            SpaceBattle.Interfaces.ICommand cmd = queue.Receive();
-            tryExecute(cmd);
+            if (!queue.IsEmpty()){
+                SpaceBattle.Interfaces.ICommand cmd = queue.Receive();
+                tryExecute(cmd);
+            }
         }
         public void UpdateBehavior(Action newBeh)
         {
